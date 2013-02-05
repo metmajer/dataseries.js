@@ -74,21 +74,6 @@ ds.generators.f(ds.functions.identity)
     .transform(ds.transforms.point)
     .values();
 // => [{x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2}]
-
-ds.generators.f(ds.functions.identity)
-    .inputs(ds.range(2))
-    .transform(ds.transforms.hierarchy(1))
-    .values();
-// => [
-//      {x: 0, y: 0, children: []},
-//      {x: 1, y: 1, children: [
-//        {x: 1, y: 1, children: []}
-//      ]},
-//      {x: 2, y: 2, children: [
-//        {x: 1, y: 0.67, children: []},
-//        {x: 2, y: 1.33, children: []},
-//      ]}
-//    ]
 ```
 
 ## Downloads
