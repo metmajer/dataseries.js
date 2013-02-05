@@ -1,0 +1,43 @@
+{
+	"name": "dataseries",
+	"version": "0.1.0",
+	"description": "A JavaScript data series modeling library.",
+	"keywords": ["data", "series", "modeling", "data series", "data modeling", "data series modeling", "time series", "time series modeling", "testing", "utilities"],
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/mit-license.php"
+		}
+	],
+	"homepage": "https://github.com/metmajer/dataseries.js/",
+	"bugs": "https://github.com/metmajer/dataseries.js/issues",
+	"author": "Martin Walter",
+	"contributors": [{
+		"name": "Martin Walter",
+		"email": "martin.walter@gmail.com"
+	}],
+	"main": "src/dataseries",
+	"directories": {
+		"docs": "docs",
+		"examples": "examples",
+		"lib": "lib",
+		"src": "src",
+		"test": "test"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/metmajer/dataseries.js.git"
+	},
+	"devDependencies": {
+		"buster": "*",
+		"buster-amd": "*",
+		"grunt": "0.3.x",
+		"grunt-buster": ">= 0.1.2",
+		"grunt-contrib-clean": "0.3.x",
+		"grunt-contrib-requirejs": "0.3.x",
+		"grunt-contrib-watch": "0.1.x",
+		"markdox": ">= 0.1.2"
+	},
+	"categories": ["Data", "Testing", "Utilities"],
+	"private": true
+}

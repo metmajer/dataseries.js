@@ -1,0 +1,54 @@
+<? function module(doc) {
+	var sortedComments = doc.javadoc.sort(function(a, b) { return a.name.localeCompare(b.name); });
+	sortedComments.forEach(function(comment) {
+		if (!comment.ignore) {
+			if (comment.name) {
+				if (comment.isMethod || comment.isFunction) { ?>
+## <a name="<?= comment.name ?>" href="#"><?= comment.name ?></a>(<?= comment.paramStr ?>)
+<?				} else { ?>
+## <a name="<?= comment.name ?>" href="#"><?= comment.name ?></a>
+<?				}
+			}
+?>
+<?= comment.description ?>
+<?			if (comment.author) { ?>
+Author: <?= comment.author ?>
+<?			}
+
+			if (comment.version) { ?>
+Version: <?= comment.version ?>
+<? 			}
+
+			if (comment.see) { ?>
+See: <?= comment.see ?>
+<?			}
+
+			if (comment.deprecated) { ?>
+**Deprecated**
+<? 			}
+
+			if (comment.paramTags.length > 0) { ?>
+### Params:
+<?				comment.paramTags.forEach(function(paramTag) { ?>
+* **<?= paramTag.joinedTypes ?>** *<?= paramTag.name ?>* <?= paramTag.description ?>
+<?				})
+			}
+
+			if (comment.returnTags.length > 0) { ?>
+### Returns:
+<?				comment.returnTags.forEach(function(returnTag) { ?>
+* **<?= returnTag.joinedTypes ?>** <?= returnTag.description ?>
+<?				})
+			}
+
+			if (comment.throwsTags.length > 0) { ?>
+### Throws:
+<?				comment.throwsTags.forEach(function(throwsTag) { ?>
+* **<?= throwsTag.joinedTypes ?>** <?= throwsTag.description ?>
+<?				})
+			}
+		}
+	})
+} ?>
+
+<? docfiles.map(module); ?>

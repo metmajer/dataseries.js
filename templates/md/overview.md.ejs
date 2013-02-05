@@ -1,0 +1,55 @@
+<?
+function getModuleNameFromFileName(filename) {
+	if (isGenerator(filename)) return filename.replace(/^src\/dataseries\/generators\//, "").replace(/\.js$/, "");
+	return filename.replace(/^src\/dataseries\//, "ds.").replace(/\//g, ".").replace(/\.js$/, "");
+}
+
+function isDocPrintable(doc) {
+	return doc.javadoc.some(function(comment) {
+		return comment.ignore !== undefined && !comment.ignore;
+	});
+}
+
+function isGenerator(filename) {
+	return filename.match(/^src\/dataseries\/generators\//);
+}
+
+function isModule(filename) {
+	return !isGenerator(filename);
+}
+?>
+
+# dataseries.js
+
+**A JavaScript data series modeling library.**
+
+The aim of dataseries.js is to provide a lightweight and intuitive interface for modeling data series.
+
+**Applications**
+- Generating test vectors for automated *software tests*
+- Generating data series for *data visualization prototyping*
+- Assessing the robustness and *edge-case behavior* of data visualizations, etc.
+
+Copyright (c) 2013 Martin Walter <martin.walter@gmail.com>.<br>
+This script is freely distributable under the terms of the MIT license.
+
+<? function section(doc) {
+	if (isDocPrintable(doc)) {
+		var moduleName = getModuleNameFromFileName(doc.filename); ?>
+### <a href="<?= moduleName ?>.html"><?= moduleName ?></a>
+<?		var sortedComments = doc.javadoc.sort(function(a, b) { return a.name.localeCompare(b.name); });
+		sortedComments.forEach(function(comment) {
+			if (!comment.ignore) {
+				if (comment.name) { ?>
+- <a href="<?= moduleName ?>.html#<?= comment.name ?>"><?= comment.name ?></a>
+<?				}
+			}
+		})
+	}
+} ?>
+
+## Modules
+<? docfiles.filter(function(doc) { return isModule(doc.filename); }).map(section); ?>
+
+## Generators
+<? docfiles.filter(function(doc) { return isGenerator(doc.filename); }).map(section); ?>

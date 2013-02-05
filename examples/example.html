@@ -1,0 +1,191 @@
+<!doctype html>
+
+<meta charset="utf-8"/>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
+<script src="../lib/charts/area.js"></script>
+<script src="../dataseries.js"></script>
+
+<style>
+body, textarea {
+	font-family: Georgia; Arial; sans-serif;
+	padding: 0;
+	margin: 0;
+}
+
+section h1, section h2 {
+	text-align: center;
+}
+
+section h2 {
+	font-weight: normal;
+	margin-bottom: 32px;
+}
+
+aside {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 600px;
+	border-left: 1px solid gray;
+}
+
+aside ol {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+aside ol li {
+	cursor: pointer;
+	font-size: 18px;
+	text-indent: 12px;
+	line-height: 36px;
+	background-color: white;
+	margin: 0;
+}
+
+aside ol li:not(:last-child) {
+	border-bottom: 1px solid gray;
+}
+
+aside ol li a {
+	display: block;
+	color: black;
+	text-decoration: none;
+}
+
+aside ol li.heading {
+	cursor: auto;
+	color: white;
+	font-size: 22px;
+	line-height: 40px;
+	background-color: black;
+}
+
+aside ol li.selected {
+	color: white;
+	background-color: steelblue;
+}
+
+aside button {
+	vertical-align: middle;
+	margin-left: 30px;
+}
+
+aside textarea {
+	width: 100%;
+	height: 200px;
+	font-size: 16px;
+	line-height: 18px;
+	padding: 12px;
+	border: none;
+}
+
+#graph {
+	margin-left: 60px;
+}
+
+#graph svg .axis path,
+#graph svg .axis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
+
+#graph svg .area {
+	fill: steelblue;
+}
+</style>
+
+<section>
+	<h1>dataseries.js</h1>
+	<h2>Generate data series from functions <i>y = f(x)</i></h2>
+	<div id="graph"></div>
+</section>
+
+<aside>
+	<ol id="generators">
+		<li class="heading">Functions</li>
+		<li>
+			<ol id="functions">
+				<li><a id="linear">ds.functions.linear</a></li>
+				<li><a id="square">ds.functions.square</a></li>
+				<li><a id="cubic">ds.functions.cubic</a></li>
+				<li><a id="polynomial">ds.functions.polynomial</a></li>
+				<li><a id="exp">ds.functions.exp (attack)</a></li>
+				<li><a id="expDecay">ds.functions.exp (decay)</a></li>
+				<li><a id="log">ds.functions.log</a></li>
+				<li><a id="sin">ds.functions.sin</a></li>
+				<li><a id="cos">ds.functions.cos</a></li>
+			</ol>
+		</li>
+		<li class="heading">Composites</li>
+		<li>
+			<ol id="composites">
+				<li><a id="timeSeries">Time Series</a></li>
+				<li><a id="expWeightedSine">Exp. weighted sine</a></li>
+				<li><a id="expWeightedSinePlusLinear">Exp. weighted sine plus linear</a></li>
+			</ol>
+		</li>
+		<li class="heading">JavaScript Code <button id="run">Run</button></li>
+		<li style="text-indent: 0;">
+			<textarea id="code"></textarea>
+		</li>
+	</ol>
+</aside>
+
+<script>
+function generatorCode(f, inputs, filter, time, transform) {
+	if (inputs === undefined) inputs = "ds.range(0, 2, 0.01)";
+	if (time === undefined) time = "new Date(), ds.time.DAY";
+	if (transform === undefined) transform = "ds.transforms.point";
+
+	var code = "ds.generators.f(" + f + ")\n";
+	if (inputs) code += "\t.inputs(" + inputs + ")\n";
+	if (filter) code += "\t.filter(" + filter + ")\n";
+	if (time) code += "\t.time(" + time + ")\n";
+	if (transform) code += "\t.transform(" + transform + ")\n";
+	code += "\t.values();";
+	return code;
+}
+
+var generatorCodes = {
+	// functions
+	"linear":     generatorCode("ds.functions.linear"),
+	"square":     generatorCode("ds.functions.square"),
+	"cubic":      generatorCode("ds.functions.cubic, -1, 10",          "ds.range(-5, 10, 0.01)"),
+	"polynomial": generatorCode("ds.functions.polynomial, [0, -1, 0, 2]", "ds.range(-1, 1, 0.01)"),
+	"exp":        generatorCode("ds.functions.exp", "ds.range(0, 10, 0.01)"),
+	"expDecay":   generatorCode("ds.functions.exp, Math.E, -1", "ds.range(0, 10, 0.01)"),
+	"log":        generatorCode("ds.functions.log",                       "ds.range(0.0001, 2, 0.01)", "function(y, x, i) { return ds.predicates.isPositiveNumber(y); }"),
+	"sin":        generatorCode("ds.functions.sin",                       "ds.range(0, 2, 0.01)"),
+	"cos":        generatorCode("ds.functions.cos",                       "ds.range(0, 2, 0.01)"),
+	// composites
+	"timeSeries": generatorCode("function(x) {\n\t\treturn ds.functions.linear(x)\n\t\t+ x / 3 * ds.functions.sin(x)\n\t\t+ ds.random.rand(0, 0.1);\n\t}", "ds.range(0, 1, 0.005)"),
+	"expWeightedSine": generatorCode("function(x) {\n\t\treturn ds.functions.exp(x, Math.E, -1)\n\t\t* ds.functions.sin(x);\n\t}", "ds.range(0, 3, 0.01)"),
+	"expWeightedSinePlusLinear": generatorCode("function(x) {\n\t\treturn ds.functions.exp(x, Math.E, -1)\n\t\t* ds.functions.sin(x)\n\t\t+ ds.functions.linear(x / 2);\n\t}", "ds.range(0, 3, 0.01)", undefined, undefined, "function(y, x, i) {\n\t\ty = Math.abs(y);\n\t\treturn ds.transforms.point(y, x);\n\t}"),
+};
+
+function selectItem(items, id) {
+	items.removeClass("selected");
+	$(document.querySelector("#" + id).parent).addClass("selected");
+	$("#code").val(generatorCodes[id]);
+	$("#run").click();
+}
+
+var $items = $("#generators li a");
+$items.on("click", function() {
+	selectItem($items, this.id);
+});
+
+$("#run").on("click", function() {
+	eval("var data = " + $("#code").val());
+	chart.data(data)();
+	console.log(data);
+});
+
+var chart = area(d3.select("#graph")).width(800).height(600);
+selectItem($items, "sin");
+</script>
