@@ -163,11 +163,6 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * g.values();
  * // => [0, 1, 2]
  *
- * g.transform(function(y, x, i) {
- *     return y >= 0 ? y : null;
- * }).values();
- * // => [null, null, 0, 1, 2]
- *
  * g.transform(ds.transforms.pair).values();
  * // => [[0, 0],
  * //     [1, 1],
@@ -177,6 +172,11 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * // => [{x: 0, y: 0},
  * //     {x: 1, y: 1},
  * //     {x: 2, y: 2}]
+ *
+ * g.inputs(ds.range(-2, 2)).transform(function(y, x, i) {
+ *     return y >= 0 ? y : null;
+ * }).values();
+ * // => [null, null, 0, 1, 2]
  * ```
  *
  * @param  {Function|undefined} [callback] A filter callback.
@@ -191,7 +191,7 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
 	};
 
 /**
- * Computes the output values which correspond to the set of generator `inputs`.
+ * Computes the output values which correspond to the set of generator inputs and optionally filters and transforms them.
  * @return {Array} Returns the generated data series.
  */
 	this.values = function() {

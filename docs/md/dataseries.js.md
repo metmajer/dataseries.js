@@ -2,15 +2,7 @@
 
 # dataseries.js
 
-**A JavaScript data series modeling library.**
-
-The aim of dataseries.js is to provide a lightweight and intuitive interface for modeling data series.
-
-**Applications**
-- Generating test vectors for automated *software tests*
-- Generating data series for *data visualization prototyping*
-- Assessing the robustness and *edge-case behavior* of data visualizations, etc.
-
+**dataseries.js** is a JavaScript data series modeling library.<br>
 Copyright (c) 2013 Martin Walter <martin.walter@gmail.com>.<br>
 This script is freely distributable under the terms of the MIT license.
 

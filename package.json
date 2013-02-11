@@ -1,6 +1,6 @@
 {
 	"name": "dataseries",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A JavaScript data series modeling library.",
 	"keywords": ["data", "series", "modeling", "data series", "data modeling", "data series modeling", "time series", "time series modeling", "testing", "utilities"],
 	"licenses": [

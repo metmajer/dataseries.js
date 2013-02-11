@@ -1,0 +1,270 @@
+<!doctype html>
+
+<meta charset="utf-8"/>
+
+<script src="lib/behave.js"></script>
+<script src="lib/d3.v3.min.js"></script>
+<script src="lib/jquery-1.9.0.min.js"></script>
+<script src="lib/charts/line.js"></script>
+<script src="../dataseries.js"></script>
+
+<link rel="stylesheet" type="text/css" href="lib/hint.min.css"/>
+
+<style>
+* {
+	color: #303030;
+}
+
+html, body, #body, #body nav {
+	height: 100%;
+}
+
+body, button {
+	font-family: Georgia, Arial, sans-serif;
+	font-size: 12px;
+	padding: 0;
+	margin: 0;
+}
+
+header, header * {
+	color: white;
+	font-size: 22px;
+	line-height: 40px;
+}
+
+header {
+	background-color: #303030;
+	border-bottom: 1px solid #a8a8a8;
+	padding: 0 60px 0 30px;
+	margin: 0;
+}
+
+header a {
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#body:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+#body #graph {
+	float: left;
+}
+
+#body nav {
+	float: right;
+	height: 100%;
+	border-left: 1px solid #a8a8a8;
+}
+
+#body nav a, #body nav h1 {
+	display: block;
+	color: white;
+	font-size: 18px;
+	line-height: 36px;
+	text-decoration: none;
+	background-color: #303030;
+	border-bottom: 1px solid #a8a8a8;
+	padding: 0 60px 0 30px;
+	margin: 0;
+}
+
+#body nav a:hover, #body nav a.selected {
+	color: white;
+	background-color: steelblue;
+}
+
+#body nav h1 {
+	color: black;
+	font-weight: bold;
+	background-color: white;
+}
+
+#code {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	height: 0;
+	padding-top: 10px;
+	border-top: 1px solid #303030;
+	-moz-transition: height 0.2s ease-out;
+	-webkit-transition: height 0.2s ease-out;
+	transition: height 0.2s ease-out;
+}
+
+#code.open {
+	height: 30%;
+}
+
+#code a {
+	display: block;
+	width: 200px;
+	font-weight: bold;
+	text-align: center;
+	text-decoration: none;
+	background-color: white;
+	padding: 6px 0;
+	border: 1px solid #303030;
+	border-bottom: none;
+	margin: 0 auto;
+	margin-top: -38px;
+	-moz-border-top-left-radius: 4px;
+	-moz-border-top-right-radius: 4px;
+	-o-border-top-left-radius: 4px;
+	-o-border-top-right-radius: 4px;
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+
+#code textarea {
+	width: 100%;
+	height: 100%;
+	color: black;
+	background-color: white;
+	opacity: 0.8;
+	padding: 10px;
+	border: none;
+	margin-top: 1px;
+}
+
+#code button {
+	cursor: pointer;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	height: 40px;
+	color: white;
+	font-weight: bold;
+	text-transform: lowercase;
+	background-color: #a00000;
+	border: 1px solid #a8a8a8;
+	padding: 0 10px 2px 10px;
+	margin: 0;
+	-moz-border-radius: 50%;
+	-o-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+}
+
+#graph svg .axis path,
+#graph svg .axis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
+
+#graph svg .graph {
+	fill: none;
+	stroke: steelblue;
+	stroke-width: 1.5px;
+}
+
+.hint:after {
+	font-family: Georgia, Arial, sans-serif;
+	font-size: 14px;
+	background-color: #303030;
+}
+</style>
+
+<header>
+	<a href="https://github.com/metmajer/dataseries.js">dataseries.js</a> Examples: generate data series from functions <i>y = f(x)</i>
+</header>
+<section id="body">
+	<div id="graph"></div>
+
+	<nav>
+		<a id="linear" class="hint hint--left" data-hint="f(x, a, b) = a · x + b" href="#">Linear</a>
+		<a id="square" class="hint hint--left" data-hint="f(x, a, b, c) = a · x² + b · x + c" href="#">Square</a>
+		<a id="cubic" class="hint hint--left" data-hint="f(x, a, b, c, d) = a · x³ + b · x² + c · x + d" href="#">Cubic</a>
+		<a id="polynomial" href="#">Polynomial</a>
+		<a id="exp" class="hint hint--left" data-hint="f(x, a, b, c, d) = c · aᵇˣ + d" href="#">Exponential</a>
+		<a id="log" class="hint hint--left" data-hint="f(x, a, b, c) = b · logₐ(x) + c" href="#">Logarithmic</a>
+		<a id="sin" class="hint hint--left" data-hint="f(x, a, f, φ, b) = a · sin(2 · π · f · x + φ) + b" href="#">Sine</a>
+		<a id="cos" class="hint hint--left" data-hint="f(x, a, f, φ, b) = a · cos(2 · π · f · x + φ) + b" href="#">Cosine</a>
+		<h1>Usages</h1>
+		<a id="expDecay" class="hint hint--left" data-hint="Exponential decay." href="#">Exponential decay</a>
+		<a id="sinF10" class="hint hint--left" data-hint="A sine at 10 cycles per unit." href="#">Sine (10 cycles/unit)</a>
+		<a id="sineExpWt" class="hint hint--left" data-hint="An exponentially weighted sine." href="#">Sine (exp. weighted)</a>
+		<a id="cosPhase" class="hint hint--left" data-hint="A cosine with phase offset." href="#">Cosine (phase offset)</a>
+		<a id="timeSeries" class="hint hint--left" data-hint="A time series (trend + seasonality + remainder)." href="#">Time series</a>
+	</nav>
+</section>
+
+<section id="code">
+	<a href="#">JavaScript Code</a>
+	<textarea></textarea>
+	<button id="run">Run</button>
+</section>
+
+<script type="text/javascript">
+new Behave({
+	textarea: document.querySelector("#code textarea"),
+	softTabs: false
+});
+
+$("#code a").on("click", function() { $("#code").toggleClass("open"); });
+
+function generateCode(f, inputs, filter, time, transform) {
+	if (inputs === undefined) inputs = "ds.range(0, 2, 0.01)";
+	if (time === undefined) time = "new Date(), ds.time.DAY";
+	if (transform === undefined) transform = "ds.transforms.point";
+
+	var code = "ds.generators.f(" + f + ")\n";
+	if (inputs) code += "\t.inputs(" + inputs + ")\n";
+	if (filter) code += "\t.filter(" + filter + ")\n";
+	if (time) code += "\t.time(" + time + ")\n";
+	if (transform) code += "\t.transform(" + transform + ")\n";
+	code += "\t.values();";
+	return code;
+}
+
+var codes = {
+	// functions
+	"linear":     generateCode("ds.functions.linear"),
+	"square":     generateCode("ds.functions.square"),
+	"cubic":      generateCode("ds.functions.cubic, { a: -1, b: 10 }",          "ds.range(-5, 10, 0.01)"),
+	"polynomial": generateCode("ds.functions.polynomial, { a: [0, -1, 0, 2] }", "ds.range(-1, 1, 0.01)"),
+	"exp":        generateCode("ds.functions.exp", "ds.range(0, 10, 0.01)"),
+	"log":        generateCode("ds.functions.log",                              "ds.range(0.0001, 2, 0.01)", "function(y, x, i) { return ds.predicates.isPositiveNumber(y); }"),
+	"sin":        generateCode("ds.functions.sin",                              "ds.range(0, 2, 0.01)"),
+	"cos":        generateCode("ds.functions.cos",                              "ds.range(0, 2, 0.01)"),
+	// usages
+	"expDecay":   generateCode("ds.functions.exp, { a: Math.E, b: -1 }",        "ds.range(0, 10, 0.01)"),
+	"sinF10":     generateCode("ds.functions.sin, { f: 10 }",                   "ds.range(0, 2, 0.001)"),
+	"sineExpWt":  generateCode("function(x) {\n\t\treturn ds.functions.exp(x, { a: Math.E, b: -1 }) * ds.functions.sin(x);\n\t}", "ds.range(0, 3, 0.01)"),
+	"cosPhase":   generateCode("ds.functions.cos, { φ: Math.PI / 4 }",          "ds.range(0, 2, 0.01)"),
+	"timeSeries": generateCode("function(x) {\n\t\treturn ds.functions.linear(x, { a: 1, b: 1 })\n\t\t+ ds.functions.sin(x, { f: 0.5 })\n\t\t+ ds.random.rand(-0.2, 0.2);\n\t}", "ds.range(0, 1, 0.01)")
+};
+
+function renderChart() {
+	var width = $(window).width() - $("#body nav").outerWidth(true) - 20;
+	var height = $(window).height() - $("header").outerHeight(true)
+		- $("#code").outerHeight(true) + parseInt($("#code a").css("margin-top"), 10);
+
+	chart.width(width).height(height).data(data)();
+}
+
+function runCode() {
+	eval("data = " + $("#code textarea").val());
+	renderChart();
+}
+
+function runCodeForItem(id) {
+	$("#body nav a").removeClass("selected");
+	$("#body nav a#" + id).addClass("selected");
+	$("#code textarea").val(codes[id]);
+	runCode();
+}
+
+$(window).on("resize", renderChart);
+$("#body nav a").on("click", function () { runCodeForItem(this.id) });
+$("#run").on("click", runCode);
+
+var chart = line(d3.select("#graph")).margin({top: 60, right: 60, bottom: 60, left: 80});
+runCodeForItem("linear");
+</script>

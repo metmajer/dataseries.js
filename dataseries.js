@@ -4828,13 +4828,13 @@ exports.identity = function identity(x) {
  * ### Examples:
  *
  * ```javascript
- * ds.functions.polynomial(2, [1, 2]);
+ * ds.functions.polynomial(2, { a: [1, 2] });
  * // f(x) = 2·x + 1 for x = 2 => 5
  *
- * ds.functions.polynomial(2, [1, 2, 3]);
+ * ds.functions.polynomial(2, { a: [1, 2, 3] });
  * // f(x) = 3·x² + 2·x + 1 for x = 2 => 17
  *
- * ds.functions.polynomial(2, [1, 2, 3, 4]);
+ * ds.functions.polynomial(2, { a: [1, 2, 3, 4] });
  * // f(x) = 4·x³ + 3·x² + 2·x + 1 for x = 2 => 49
  * ```
  *
@@ -4845,15 +4845,16 @@ exports.identity = function identity(x) {
  * @throws {Error} Throws if `a` is not a (possibly empty) array of numbers.
  */
 exports.polynomial = function polynomial(x, a) {
+	var args = _.defaults(_.isPlainObject(a) ? a : { a: a }, { a: [] });
+
 	if (!_.isNumber(x)) throw new Error("polynomial(): x must be a number");
-	if (arguments.length === 1) a = [];
-	if (!predicates.isArrayOf(a, _.isNumber, false)) throw new Error("polynomial(): a must be an array of numbers or an empty array");
+	if (!predicates.isArrayOf(args.a, _.isNumber, false)) throw new Error("polynomial(): a must be an array of numbers or an empty array");
 
 	var result = 0;
 
-	var degree = a.length - 1;
+	var degree = args.a.length - 1;
 	for (var i = 0; i <= degree; i++) {
-		result += a[i] * Math.pow(x, i);
+		result += args.a[i] * Math.pow(x, i);
 	}
 
 	return result;
@@ -4868,7 +4869,7 @@ exports.polynomial = function polynomial(x, a) {
  * ds.functions.linear(2);
  * // f(x) = x for x = 2 => 2
  *
- * ds.functions.linear(2, [2, 1]);
+ * ds.functions.linear(2, { a: 2, b: 1 });
  * // f(x) = 2·x + 1 for x = 2 => 5
  * ```
  *
@@ -4879,10 +4880,8 @@ exports.polynomial = function polynomial(x, a) {
  * @throws {Error} Throws if `x` is not a number.
  */
 exports.linear = function linear(x, a, b) {
-	if (a === undefined) a = 1;
-	if (b === undefined) b = 0;
-
-	return exports.polynomial(x, [b, a]);
+	var args = _.defaults(_.isPlainObject(a) ? a : { a: a, b: b }, { a: 1, b: 0 });
+	return exports.polynomial(x, [args.b, args.a]);
 };
 
 /**
@@ -4894,7 +4893,7 @@ exports.linear = function linear(x, a, b) {
  * ds.functions.square(2);
  * // f(x) = x² for x = 2 => 4
  *
- * ds.functions.square(2, 3, 2, 1);
+ * ds.functions.square(2, { a: 3, b: 2, c: 1 });
  * // f(x) = 3·x² + 2·x + 1 for x = 2 => 17
  * ```
  *
@@ -4906,11 +4905,8 @@ exports.linear = function linear(x, a, b) {
  * @throws {Error} Throws if `x` is not a number.
  */
 exports.square = function square(x, a, b, c) {
-	if (a === undefined) a = 1;
-	if (b === undefined) b = 0;
-	if (c === undefined) c = 0;
-
-	return exports.polynomial(x, [c, b, a]);
+	var args = _.defaults(_.isPlainObject(a) ? a : { a: a, b: b, c: c }, { a: 1, b: 0, c: 0 });
+	return exports.polynomial(x, [args.c, args.b, args.a]);
 };
 
 /**
@@ -4922,7 +4918,7 @@ exports.square = function square(x, a, b, c) {
  * ds.functions.cubic(2);
  * // f(x) = x³ for x = 2 => 8
  *
- * ds.functions.cubic(2, 4, 3, 2, 1);
+ * ds.functions.cubic(2, { a: 4, b: 3, c: 2, d: 1 });
  * // f(x) = 4·x³ + 3·x² + 2·x + 1 for x = 2 => 49
  * ```
  *
@@ -4935,12 +4931,8 @@ exports.square = function square(x, a, b, c) {
  * @throws {Error} Throws if `x` is not a number.
  */
 exports.cubic = function cubic(x, a, b, c, d) {
-	if (a === undefined) a = 1;
-	if (b === undefined) b = 0;
-	if (c === undefined) c = 0;
-	if (d === undefined) d = 0;
-
-	return exports.polynomial(x, [d, c, b, a]);
+	var args = _.defaults(_.isPlainObject(a) ? a : { a: a, b: b, c: c, d: d }, { a: 1, b: 0, c: 0, d: 0 });
+	return exports.polynomial(x, [args.d, args.c, args.b, args.a]);
 };
 
 /**
@@ -4952,10 +4944,10 @@ exports.cubic = function cubic(x, a, b, c, d) {
  * ds.functions.exp(2);
  * // f(x) = e²
  *
- * ds.functions.exp(2, Math.E, 2, 10);
+ * ds.functions.exp(2, { a: Math.E, b: 2, c: 10 });
  * // f(x) = 10·e⁴
  *
- * ds.functions.exp(2, 2, 3, 10, 4);
+ * ds.functions.exp(2, { a: 2, b: 3, c: 10, d: 4 });
  * // f(x) = 10·2⁶ + 4
  * ```
  *
@@ -4972,18 +4964,15 @@ exports.cubic = function cubic(x, a, b, c, d) {
  * @throws {Error} Throws if `d` is not a number.
  */
 exports.exp = function(x, a, b, c, d) {
-	if (arguments.length < 2) a = Math.E;
-	if (arguments.length < 3) b = 1;
-	if (arguments.length < 4) c = 1;
-	if (arguments.length < 5) d = 0;
+	var args = _.defaults(_.isPlainObject(a) ? a : { a: a, b: b, c: c, d: d }, { a: Math.E, b: 1, c: 1, d: 0 });
 
 	if (!_.isNumber(x)) throw new Error("exp(): x must be a number");
-	if (!_.isNumber(a)) throw new Error("exp(): a must be a number");
-	if (!_.isNumber(b)) throw new Error("exp(): b must be a number");
-	if (!_.isNumber(c)) throw new Error("exp(): c must be a number");
-	if (!_.isNumber(d)) throw new Error("exp(): d must be a number");
+	if (!_.isNumber(args.a)) throw new Error("exp(): a must be a number");
+	if (!_.isNumber(args.b)) throw new Error("exp(): b must be a number");
+	if (!_.isNumber(args.c)) throw new Error("exp(): c must be a number");
+	if (!_.isNumber(args.d)) throw new Error("exp(): d must be a number");
 
-	return c * Math.pow(a, b * x) + d;
+	return args.c * Math.pow(args.a, args.b * x) + args.d;
 };
 
 /**
@@ -4995,10 +4984,10 @@ exports.exp = function(x, a, b, c, d) {
  * ds.functions.log(2);
  * // f(x) = logₑ(2)
  *
- * ds.functions.log(4, 2);
+ * ds.functions.log(4, { a: 2 });
  * // f(x) = log₂(4)
  *
- * ds.functions.log(4, 2, 10, 8);
+ * ds.functions.log(4, { a: 2, b: 10, c: 8 });
  * // f(x) = 10·log₂(4) + 8
  * ```
  *
@@ -5013,16 +5002,14 @@ exports.exp = function(x, a, b, c, d) {
  * @throws {Error} Throws if `c` is not a number.
  */
 exports.log = function(x, a, b, c) {
-	if (arguments.length < 2) a = Math.E;
-	if (arguments.length < 3) b = 1;
-	if (arguments.length < 4) c = 0;
+	var args = _.defaults(_.isPlainObject(a) ? a : { a: a, b: b, c: c }, { a: Math.E, b: 1, c: 0 });
 
 	if (!_.isNumber(x)) throw new Error("log(): x must be a number");
-	if (!predicates.isPositiveNumber(a)) throw new Error("log(): a must be a number >= 0");
-	if (!_.isNumber(b)) throw new Error("log(): b must be a number");
-	if (!_.isNumber(c)) throw new Error("log(): c must be a number");
+	if (!predicates.isPositiveNumber(args.a)) throw new Error("log(): a must be a number >= 0");
+	if (!_.isNumber(args.b)) throw new Error("log(): b must be a number");
+	if (!_.isNumber(args.c)) throw new Error("log(): c must be a number");
 
-	return b * Math.log(x) / Math.log(a) + c;
+	return args.b * Math.log(x) / Math.log(args.a) + args.c;
 };
 
 /**
@@ -5037,13 +5024,13 @@ exports.log = function(x, a, b, c) {
  * ds.functions.sin(0.25);
  * // f(x) = sin(π/2)
  *
- * ds.functions.sin(0.5, 10, 2, Math.PI / 2, 1);
+ * ds.functions.sin(0.5, { a: 10, f: 2, φ: Math.PI / 2, b: 1 });
  * // f(x) = 10·sin(2.5·π) + 1
  * ```
  *
  * @param {Number} x The input value.
  * @param {Number} [a=1] The amplitude.
- * @param {Number} [f=1] The frequency [Hz] (>= 0).
+ * @param {Number} [f=1] The frequency (in Hz) (>= 0).
  * @param {Number} [φ=0] The phase shift.
  * @param {Number} [b=0]
  * @return {Number} Returns the output value.
@@ -5054,18 +5041,15 @@ exports.log = function(x, a, b, c) {
  * @throws {Error} Throws if `b` is not a number.
  */
 exports.sin = function(x, a, f, φ, b) {
-	if (arguments.length < 2) a = 1;
-	if (arguments.length < 3) f = 1;
-	if (arguments.length < 4) φ = 0;
-	if (arguments.length < 5) b = 0;
+	var args = _.defaults(_.isPlainObject(a) ? a : { a: a, f: f, φ: φ, b: b }, { a: 1, f: 1, φ: 0, b: 0 });
 
 	if (!_.isNumber(x)) throw new Error("sin(): x must be a number");
-	if (!_.isNumber(a)) throw new Error("sin(): a must be a number");
-	if (!predicates.isPositiveNumber(f)) throw new Error("sin(): f must be a number >= 0");
-	if (!_.isNumber(φ)) throw new Error("sin(): φ must be a number");
-	if (!_.isNumber(b)) throw new Error("sin(): b must be a number");
+	if (!_.isNumber(args.a)) throw new Error("sin(): a must be a number");
+	if (!predicates.isPositiveNumber(args.f)) throw new Error("sin(): f must be a number >= 0");
+	if (!_.isNumber(args.φ)) throw new Error("sin(): φ must be a number");
+	if (!_.isNumber(args.b)) throw new Error("sin(): b must be a number");
 
-	return a * Math.sin(6.283185307179586 * f * x + φ) + b;
+	return args.a * Math.sin(6.283185307179586 * args.f * x + args.φ) + args.b;
 };
 
 /**
@@ -5080,13 +5064,13 @@ exports.sin = function(x, a, f, φ, b) {
  * ds.functions.cos(0.25);
  * // f(x) = cos(π/2)
  *
- * ds.functions.cos(0.5, 10, 2, Math.PI / 2, 1);
+ * ds.functions.cos(0.5, { a: 10, f: 2, φ: Math.PI / 2, b: 1 });
  * // f(x) = 10·cos(2.5·π) + 1
  * ```
  *
  * @param {Number} x The input value.
  * @param {Number} [a=1] The amplitude.
- * @param {Number} [f=1] The frequency [Hz] (>= 0).
+ * @param {Number} [f=1] The frequency (in Hz) (>= 0).
  * @param {Number} [φ=0] The phase shift.
  * @param {Number} [b=0]
  * @return {Number} Returns the output value.
@@ -5097,18 +5081,15 @@ exports.sin = function(x, a, f, φ, b) {
  * @throws {Error} Throws if `b` is not a number.
  */
 exports.cos = function(x, a, f, φ, b) {
-	if (arguments.length < 2) a = 1;
-	if (arguments.length < 3) f = 1;
-	if (arguments.length < 4) φ = 0;
-	if (arguments.length < 5) b = 0;
+	var args = _.defaults(_.isPlainObject(a) ? a : { a: a, f: f, φ: φ, b: b }, { a: 1, f: 1, φ: 0, b: 0 });
 
 	if (!_.isNumber(x)) throw new Error("cos(): x must be a number");
-	if (!_.isNumber(a)) throw new Error("cos(): a must be a number");
-	if (!predicates.isPositiveNumber(f)) throw new Error("cos(): f must be a number >= 0");
-	if (!_.isNumber(φ)) throw new Error("cos(): φ must be a number");
-	if (!_.isNumber(b)) throw new Error("cos(): b must be a number");
+	if (!_.isNumber(args.a)) throw new Error("cos(): a must be a number");
+	if (!predicates.isPositiveNumber(args.f)) throw new Error("cos(): f must be a number >= 0");
+	if (!_.isNumber(args.φ)) throw new Error("cos(): φ must be a number");
+	if (!_.isNumber(args.b)) throw new Error("cos(): b must be a number");
 
-	return a * Math.cos(6.283185307179586 * f * x + φ) + b;
+	return args.a * Math.cos(6.283185307179586 * args.f * x + args.φ) + args.b;
 };
 
 return exports;
@@ -5409,11 +5390,6 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * g.values();
  * // => [0, 1, 2]
  *
- * g.transform(function(y, x, i) {
- *     return y >= 0 ? y : null;
- * }).values();
- * // => [null, null, 0, 1, 2]
- *
  * g.transform(ds.transforms.pair).values();
  * // => [[0, 0],
  * //     [1, 1],
@@ -5423,6 +5399,11 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * // => [{x: 0, y: 0},
  * //     {x: 1, y: 1},
  * //     {x: 2, y: 2}]
+ *
+ * g.inputs(ds.range(-2, 2)).transform(function(y, x, i) {
+ *     return y >= 0 ? y : null;
+ * }).values();
+ * // => [null, null, 0, 1, 2]
  * ```
  *
  * @param  {Function|undefined} [callback] A filter callback.
@@ -5437,7 +5418,7 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
 	};
 
 /**
- * Computes the output values which correspond to the set of generator `inputs`.
+ * Computes the output values which correspond to the set of generator inputs and optionally filters and transforms them.
  * @return {Array} Returns the generated data series.
  */
 	this.values = function() {

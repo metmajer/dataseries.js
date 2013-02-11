@@ -17,7 +17,7 @@ ds.functions.cos(0);
 ds.functions.cos(0.25);
 // f(x) = cos(π/2)
 
-ds.functions.cos(0.5, 10, 2, Math.PI / 2, 1);
+ds.functions.cos(0.5, { a: 10, f: 2, φ: Math.PI / 2, b: 1 });
 // f(x) = 10·cos(2.5·π) + 1
 ```
 
@@ -27,7 +27,7 @@ ds.functions.cos(0.5, 10, 2, Math.PI / 2, 1);
 
 * **Number** *[a=1]* The amplitude.
 
-* **Number** *[f=1]* The frequency [Hz] (>= 0).
+* **Number** *[f=1]* The frequency (cycles / unit) (>= 0).
 
 * **Number** *[φ=0]* The phase shift.
 
@@ -59,7 +59,7 @@ Computes the output of the cubic function *f(x) = a · x<sup>3</sup> + b · x<su
 ds.functions.cubic(2);
 // f(x) = x³ for x = 2 => 8
 
-ds.functions.cubic(2, 4, 3, 2, 1);
+ds.functions.cubic(2, { a: 4, b: 3, c: 2, d: 1 });
 // f(x) = 4·x³ + 3·x² + 2·x + 1 for x = 2 => 49
 ```
 
@@ -93,10 +93,10 @@ Computes the output of the exponential function *f(x, a, b, c, d) = c · a<sup>b
 ds.functions.exp(2);
 // f(x) = e²
 
-ds.functions.exp(2, Math.E, 2, 10);
+ds.functions.exp(2, { a: Math.E, b: 2, c: 10 });
 // f(x) = 10·e⁴
 
-ds.functions.exp(2, 2, 3, 10, 4);
+ds.functions.exp(2, { a: 2, b: 3, c: 10, d: 4 });
 // f(x) = 10·2⁶ + 4
 ```
 
@@ -150,7 +150,7 @@ Computes the output of the linear function *f(x) = a · x + b* for a particular 
 ds.functions.linear(2);
 // f(x) = x for x = 2 => 2
 
-ds.functions.linear(2, [2, 1]);
+ds.functions.linear(2, { a: 2, b: 1 });
 // f(x) = 2·x + 1 for x = 2 => 5
 ```
 
@@ -180,10 +180,10 @@ Computes the output of the logarithmic function *f(x, a, b, c) = b · log<sub>a<
 ds.functions.log(2);
 // f(x) = logₑ(2)
 
-ds.functions.log(4, 2);
+ds.functions.log(4, { a: 2 });
 // f(x) = log₂(4)
 
-ds.functions.log(4, 2, 10, 8);
+ds.functions.log(4, { a: 2, b: 10, c: 8 });
 // f(x) = 10·log₂(4) + 8
 ```
 
@@ -218,13 +218,13 @@ Computes the output of the polynomial function *f(x) = a[n] · x<sup>n</sup> + a
 ### Examples:
 
 ```javascript
-ds.functions.polynomial(2, [1, 2]);
+ds.functions.polynomial(2, { a: [1, 2] });
 // f(x) = 2·x + 1 for x = 2 => 5
 
-ds.functions.polynomial(2, [1, 2, 3]);
+ds.functions.polynomial(2, { a: [1, 2, 3] });
 // f(x) = 3·x² + 2·x + 1 for x = 2 => 17
 
-ds.functions.polynomial(2, [1, 2, 3, 4]);
+ds.functions.polynomial(2, { a: [1, 2, 3, 4] });
 // f(x) = 4·x³ + 3·x² + 2·x + 1 for x = 2 => 49
 ```
 
@@ -257,7 +257,7 @@ ds.functions.sin(0);
 ds.functions.sin(0.25);
 // f(x) = sin(π/2)
 
-ds.functions.sin(0.5, 10, 2, Math.PI / 2, 1);
+ds.functions.sin(0.5, { a: 10, f: 2, φ: Math.PI / 2, b: 1 });
 // f(x) = 10·sin(2.5·π) + 1
 ```
 
@@ -267,7 +267,7 @@ ds.functions.sin(0.5, 10, 2, Math.PI / 2, 1);
 
 * **Number** *[a=1]* The amplitude.
 
-* **Number** *[f=1]* The frequency [Hz] (>= 0).
+* **Number** *[f=1]* The frequency (cycles / unit) (>= 0).
 
 * **Number** *[φ=0]* The phase shift.
 
@@ -299,7 +299,7 @@ Computes the output of the square function *f(x) = a · x<sup>2</sup> + b · x +
 ds.functions.square(2);
 // f(x) = x² for x = 2 => 4
 
-ds.functions.square(2, 3, 2, 1);
+ds.functions.square(2, { a: 3, b: 2, c: 1 });
 // f(x) = 3·x² + 2·x + 1 for x = 2 => 17
 ```
 

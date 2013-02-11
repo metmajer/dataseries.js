@@ -156,11 +156,6 @@ var g = ds.generators.f(ds.functions.identity).inputs(ds.range(2));
 g.values();
 // => [0, 1, 2]
 
-g.transform(function(y, x, i) {
-    return y >= 0 ? y : null;
-}).values();
-// => [null, null, 0, 1, 2]
-
 g.transform(ds.transforms.pair).values();
 // => [[0, 0],
 //     [1, 1],
@@ -170,6 +165,11 @@ g.transform(ds.transforms.point).values();
 // => [{x: 0, y: 0},
 //     {x: 1, y: 1},
 //     {x: 2, y: 2}]
+
+g.inputs(ds.range(-2, 2)).transform(function(y, x, i) {
+    return y >= 0 ? y : null;
+}).values();
+// => [null, null, 0, 1, 2]
 ```
 
 ### Params:
@@ -186,7 +186,7 @@ g.transform(ds.transforms.point).values();
 
 ## <a name="values" href="#">values</a>()
 
-Computes the output values which correspond to the set of generator `inputs`.
+Computes the output values which correspond to the set of generator inputs and optionally filters and transforms them.
 
 ### Returns:
 
