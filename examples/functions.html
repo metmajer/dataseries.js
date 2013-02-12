@@ -90,8 +90,10 @@ header a {
 	height: 0;
 	padding-top: 10px;
 	border-top: 1px solid #303030;
-	-moz-transition: height 0.2s ease-out;
 	-webkit-transition: height 0.2s ease-out;
+	-moz-transition: height 0.2s ease-out;
+	-ms-transition: height 0.2s ease-out;
+	-o-transition: height 0.2s ease-out;
 	transition: height 0.2s ease-out;
 }
 
@@ -111,12 +113,14 @@ header a {
 	border-bottom: none;
 	margin: 0 auto;
 	margin-top: -38px;
-	-moz-border-top-left-radius: 4px;
-	-moz-border-top-right-radius: 4px;
-	-o-border-top-left-radius: 4px;
-	-o-border-top-right-radius: 4px;
 	-webkit-border-top-left-radius: 4px;
 	-webkit-border-top-right-radius: 4px;
+	-moz-border-top-left-radius: 4px;
+	-moz-border-top-right-radius: 4px;
+	-ms-border-top-left-radius: 4px;
+	-ms-border-top-right-radius: 4px;
+	-o-border-top-left-radius: 4px;
+	-o-border-top-right-radius: 4px;
 	border-top-left-radius: 4px;
 	border-top-right-radius: 4px;
 }
@@ -145,9 +149,10 @@ header a {
 	border: 1px solid #a8a8a8;
 	padding: 0 10px 2px 10px;
 	margin: 0;
-	-moz-border-radius: 50%;
-	-o-border-radius: 50%;
 	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	-ms-border-radius: 50%;
+	-o-border-radius: 50%;
 	border-radius: 50%;
 }
 
@@ -162,6 +167,39 @@ header a {
 	fill: none;
 	stroke: steelblue;
 	stroke-width: 1.5px;
+}
+
+#code.slideUpDown {
+	-webkit-animation: slideUp 1.5s 2s ease;
+	-moz-animation: slideUp 1.5s 2s ease;
+	-ms-animation: slideUp 1.5s 2s ease;
+	-o-animation: slideUp 1.5s 2s ease;
+	animation: slideUp 1.5s 2s ease;
+}
+
+@-webkit-keyframes slideUp {
+	0%, 100% { height: 0; }
+	30%, 80% { height: 20%; }
+}
+
+@-moz-keyframes slideUp {
+	0%, 100% { height: 0; }
+	30%, 80% { height: 20%; }
+}
+
+@-ms-keyframes slideUp {
+	0%, 100% { height: 0; }
+	30%, 80% { height: 20%; }
+}
+
+@-o-keyframes slideUp {
+	0%, 100% { height: 0; }
+	30%, 80% { height: 20%; }
+}
+
+@keyframes slideUp {
+	0%, 100% { height: 0; }
+	30%, 80% { height: 20%; }
 }
 
 .hint:after {
@@ -207,6 +245,7 @@ new Behave({
 	softTabs: false
 });
 
+$("#code").addClass("slideUpDown");
 $("#code a").on("click", function() { $("#code").toggleClass("open"); });
 
 function generateCode(f, inputs, filter, time, transform) {
