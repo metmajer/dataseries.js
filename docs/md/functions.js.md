@@ -27,7 +27,7 @@ ds.functions.cos(0.5, { a: 10, f: 2, φ: Math.PI / 2, b: 1 });
 
 * **Number** *[a=1]* The amplitude.
 
-* **Number** *[f=1]* The frequency (cycles / unit) (>= 0).
+* **Number** *[f=1]* The frequency (in Hz) (>= 0).
 
 * **Number** *[φ=0]* The phase shift.
 
@@ -267,7 +267,7 @@ ds.functions.sin(0.5, { a: 10, f: 2, φ: Math.PI / 2, b: 1 });
 
 * **Number** *[a=1]* The amplitude.
 
-* **Number** *[f=1]* The frequency (cycles / unit) (>= 0).
+* **Number** *[f=1]* The frequency (in Hz) (>= 0).
 
 * **Number** *[φ=0]* The phase shift.
 
