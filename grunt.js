@@ -6,13 +6,12 @@ module.exports = function(grunt) {
 
 		buster: {
 			test: {
-				// TODO: why doesn't this accept a template?
 				config: "test/buster.js"
 			}
 		},
 
 		clean: {
-			docs: ["docs/**"],
+			docs: ["<%= pkg.directories.docs %>/**"],
 			dataseries: ["dataseries.js", "dataseries.min.js"]
 		},
 
@@ -22,6 +21,17 @@ module.exports = function(grunt) {
 
 		min: {
 			"dataseries.min.js": "dataseries.js"
+		},
+
+		replace: {
+			"gh-pages": {
+				src: "docs/md/**.md",
+				dest: "docs/gh-pages/",
+				replacements: [
+					{ from: ".html", to: "" },
+					{ from: /name="(.*)?"/, to: 'name="wiki-$1"' }
+				]
+			}
 		},
 
 		requirejs: {
@@ -45,16 +55,17 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-clean");
 	grunt.loadNpmTasks("grunt-contrib-requirejs");
 	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-text-replace");
 
 	grunt.registerTask("default", "buster requirejs min docs");
-	grunt.registerTask("docs", "mddocs");
+	grunt.registerTask("docs", "md gh-pages");
 	grunt.registerTask("test", "buster");
 
-	grunt.registerTask("mddocs", "Generate markdown docs from source files", function() {
+	grunt.registerTask("md", "Generate markdown docs from source files", function() {
 		var markdox = require("markdox");
 		var path = require("path");
 
-		var sources = "src/**/*.js";
+		var sources = "<%= pkg.directories.src %>/**/*.js";
 		var dest = "docs/md/";
 
 		var files = grunt.file.expandFiles(sources).sort(function(a, b) {
@@ -83,4 +94,6 @@ module.exports = function(grunt) {
 			done();
 		});
 	});
+
+	grunt.registerTask("gh-pages", "Generate GitHub pages from markdown docs", "replace:gh-pages");
 }

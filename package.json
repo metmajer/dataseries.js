@@ -36,6 +36,7 @@
 		"grunt-contrib-clean": "0.3.x",
 		"grunt-contrib-requirejs": "0.3.x",
 		"grunt-contrib-watch": "0.1.x",
+		"grunt-text-replace": "*",
 		"markdox": ">= 0.1.2"
 	},
 	"categories": ["Data", "Testing", "Utilities"],
