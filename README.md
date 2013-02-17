@@ -1,4 +1,4 @@
-dataseries.js <sup>v0.1.1</sup>
+dataseries.js <sup>v0.1.2</sup>
 =============
 
 **A JavaScript data series modeling library.**
