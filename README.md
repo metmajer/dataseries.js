@@ -16,8 +16,8 @@ interface for modeling data series.
 
 - Data *generation* by sophisticated generators
 - Data *filtering* by applying *predicate functions*
-- Data *transforms* to produce arbitrary data structures
-- etc.
+- Data *transforms* to produce custom data structures
+- and much more
 
 ## Usage
 
