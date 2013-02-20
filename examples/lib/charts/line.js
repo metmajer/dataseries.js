@@ -1,10 +1,10 @@
 function line(selection) {
-	var margin = {top: 20, right: 40, bottom: 40, left: 80},
-	    width = 600,
-	    height = 400,
-	    x = function(d) { return d.x; },
-	    y = function(d) { return Math.abs(d.y) != Infinity ? d.y : null; },
-	    yLabel = "", data = [];
+	var data = [],
+		width = 600, height = 400,
+		margin = {top: 20, right: 40, bottom: 40, left: 80},
+		x = function(d) { return d.x; },
+		y = function(d) { return Math.abs(d.y) != Infinity ? d.y : null; },
+		yLabel = "", showDots = false;
 
 	function chart() {
 		if (!data.length) return;
@@ -33,14 +33,17 @@ function line(selection) {
 		var graph = d3.svg.line()
 			.x(function(d) { return xScale(x(d)); })
 			.y(function(d) { return yScale(y(d)); });
+		if (interpolate) graph.interpolate(interpolate);
 
 		var svg = selection.select("svg"),
-			g = svg.select("g");
+			g = svg.select("g.graph"),
+			gDots = svg.select("g.dots")
+			overlay = selection.select(".overlay");
 
 		if (svg.empty()) {
 			svg = selection.append("svg");
 
-			g = svg.append("g");
+			g = svg.append("g").classed("graph", true);
 			g.append("path")
 				.attr("class", "graph");
 			g.append("g")
@@ -52,6 +55,14 @@ function line(selection) {
 					.attr("y", 6)
 					.attr("dy", ".71em")
 					.style("text-anchor", "end");
+
+			if (showDots) {
+				gDots = svg.append("g").classed("dots", true);
+				overlay = selection.append("div")
+					.classed("overlay", true)
+					.style("display", "none")
+					.style("opacity", 0);
+			}
 		}
 
 		svg
@@ -70,6 +81,34 @@ function line(selection) {
 			.call(yAxis)
 			.select("text")
 				.text(yLabel);
+
+		if (showDots) {
+			dots = gDots.selectAll("circle").data(data);
+			dots.exit().remove();
+			dots.enter().append("circle")
+				.attr("r", "4px")
+				.on("mouseover", function(d) {
+					d3.select(this).transition()
+						.attr("r", "8px");
+
+					overlay
+						.html("<div><strong>X:</strong> " + d.x.toDateString() + "</div><div><strong>Y:</strong> " + d.y.toFixed(4) + "</div>")
+						.transition()
+						.style("display", "block")
+						.style("opacity", 1);
+				})
+				.on("mouseout", function() {
+					d3.select(this).transition()
+						.attr("r", "4px");
+
+					overlay.transition()
+						.style("opacity", 0)
+						.style("display", "none");
+				});
+			dots
+				.attr("cx", function(d) { return xScale(x(d)) + margin.left; })
+				.attr("cy", function(d) { return yScale(y(d)) + margin.top; });
+		}
 	}
 
 	chart.data = function(value) {
@@ -111,6 +150,18 @@ function line(selection) {
 	chart.yLabel = function(value) {
 		if (!arguments.length) return yLabel;
 		yLabel = value;
+		return chart;
+	};
+
+	chart.interpolate = function(value) {
+		if (!arguments.length) return interpolate;
+		interpolate = value;
+		return chart;
+	};
+
+	chart.showDots = function(value) {
+		if (!arguments.length) return showDots;
+		showDots = value;
 		return chart;
 	};
 

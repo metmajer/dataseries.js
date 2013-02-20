@@ -138,6 +138,7 @@ header a {
 	height: 100%;
 	color: black;
 	font-family: Courier, "Courier New", monospace;
+	font-size: 16px;
 	background-color: white;
 	opacity: 0.8;
 	padding: 10px;
@@ -165,6 +166,10 @@ header a {
 	border-radius: 50%;
 }
 
+#graph {
+	position: relative;
+}
+
 #graph svg .axis path,
 #graph svg .axis line {
 	fill: none;
@@ -172,10 +177,38 @@ header a {
 	shape-rendering: crispEdges;
 }
 
-#graph svg .graph {
+#graph svg .graph path.graph {
 	fill: none;
 	stroke: steelblue;
 	stroke-width: 1.5px;
+}
+
+#graph svg .dots circle {
+	fill: white;
+	stroke: steelblue;
+	stroke-width: 1.5px;
+}
+
+#graph .overlay {
+	position: absolute;
+	top: 60px;
+	left: 100px;
+	display: inline-block;
+	font-size: 14px;
+	line-height: 20px;
+	white-space: nowrap;
+	padding: 8px 10px;
+	background-color: white;
+	border: 1px solid #303030;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+}
+
+#graph .overlay strong {
+	color: steelblue;
 }
 
 @-webkit-keyframes slideUp {
@@ -247,10 +280,10 @@ new Behave({
 });
 
 $("#code").addClass("slideUpDown");
-$("#code a").on("click", function() { $("#code").toggleClass("open"); });
+$("#code a").on("click", function() { $("#code").removeClass("slideUpDown").toggleClass("open"); });
 
 function generateCode(f, inputs, filter, time, transform) {
-	if (inputs === undefined) inputs = "ds.range(0, 2, 0.01)";
+	if (inputs === undefined) inputs = "ds.range(0, 2, 0.1)";
 	if (time === undefined) time = "new Date(), ds.time.DAY";
 	if (transform === undefined) transform = "ds.transforms.point";
 
@@ -267,17 +300,17 @@ var codes = {
 	// functions
 	"linear":     generateCode("ds.functions.linear"),
 	"square":     generateCode("ds.functions.square"),
-	"cubic":      generateCode("ds.functions.cubic, { a: -1, b: 10 }",          "ds.range(-5, 10, 0.01)"),
-	"polynomial": generateCode("ds.functions.polynomial, { a: [0, -1, 0, 2] }", "ds.range(-1, 1, 0.01)"),
-	"exp":        generateCode("ds.functions.exp", "ds.range(0, 10, 0.01)"),
-	"log":        generateCode("ds.functions.log",                              "ds.range(0.0001, 2, 0.01)", "function(y, x, i) { return ds.predicates.isPositiveNumber(y); }"),
-	"sin":        generateCode("ds.functions.sin",                              "ds.range(0, 2, 0.01)"),
-	"cos":        generateCode("ds.functions.cos",                              "ds.range(0, 2, 0.01)"),
+	"cubic":      generateCode("ds.functions.cubic, { a: -1, b: 10 }",          "ds.range(-5, 10, 0.5)"),
+	"polynomial": generateCode("ds.functions.polynomial, { a: [0, -1, 0, 2] }", "ds.range(-1, 1, 0.1)"),
+	"exp":        generateCode("ds.functions.exp", "ds.range(0, 10, 0.5)"),
+	"log":        generateCode("ds.functions.log",                              "ds.range(0.0001, 2, 0.1)", "function(y, x, i) { return ds.predicates.isPositiveNumber(y); }"),
+	"sin":        generateCode("ds.functions.sin",                              "ds.range(0, 2, 0.05)"),
+	"cos":        generateCode("ds.functions.cos",                              "ds.range(0, 2, 0.05)"),
 	// usages
-	"expDecay":   generateCode("ds.functions.exp, { a: Math.E, b: -1 }",        "ds.range(0, 10, 0.01)"),
-	"sinF10":     generateCode("ds.functions.sin, { f: 10 }",                   "ds.range(0, 2, 0.001)"),
-	"sineExpWt":  generateCode("function(x) {\n\t\treturn ds.functions.exp(x, { a: Math.E, b: -1 }) * ds.functions.sin(x);\n\t}", "ds.range(0, 3, 0.01)"),
-	"cosPhase":   generateCode("ds.functions.cos, { φ: Math.PI / 4 }",          "ds.range(0, 2, 0.01)"),
+	"expDecay":   generateCode("ds.functions.exp, { a: Math.E, b: -1 }",        "ds.range(0, 10, 0.5)"),
+	"sinF10":     generateCode("ds.functions.sin, { f: 10 }",                   "ds.range(0, 2, 0.005)"),
+	"sineExpWt":  generateCode("function(x) {\n\t\treturn ds.functions.exp(x, { a: Math.E, b: -1 }) * ds.functions.sin(x);\n\t}", "ds.range(0, 3, 0.1)"),
+	"cosPhase":   generateCode("ds.functions.cos, { φ: Math.PI / 4 }",          "ds.range(0, 2, 0.05)"),
 	"timeSeries": generateCode("function(x) {\n\t\treturn ds.functions.linear(x, { a: 1, b: 1 })\n\t\t+ ds.functions.sin(x, { f: 0.5 })\n\t\t+ ds.random.rand(-0.2, 0.2);\n\t}", "ds.range(0, 1, 0.01)")
 };
 
@@ -305,6 +338,9 @@ $(window).on("resize", renderChart);
 $("#body nav a").on("click", function () { runCodeForItem(this.id) });
 $("#run").on("click", runCode);
 
-var chart = line(d3.select("#graph")).margin({top: 60, right: 60, bottom: 60, left: 80});
+var chart = line(d3.select("#graph"))
+	.margin({top: 60, right: 60, bottom: 60, left: 80})
+	.interpolate("cardinal")
+	.showDots(true);
 runCodeForItem("linear");
 </script>
