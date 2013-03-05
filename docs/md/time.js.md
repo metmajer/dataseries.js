@@ -69,12 +69,12 @@ ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2013, 0, 3)));
 //     new Date(Date.UTC(2013, 0, 2)),
 //     new Date(Date.UTC(2013, 0, 3))]
 
-ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2013, 2, 1)), ds.date.MONTH);
+ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2013, 2, 1)), ds.time.MONTH);
 // => [new Date(Date.UTC(2013, 0, 1)),
 //     new Date(Date.UTC(2013, 1, 1)),
 //     new Date(Date.UTC(2013, 2, 1))]
 
-ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2015, 0, 1)), ds.date.YEAR);
+ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2015, 0, 1)), ds.time.YEAR);
 // => [new Date(Date.UTC(2013, 0, 1)),
 //     new Date(Date.UTC(2014, 0, 1)),
 //     new Date(Date.UTC(2015, 0, 1))]

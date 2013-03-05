@@ -5179,12 +5179,12 @@ exports.YEAR = function(date) {
  * //     new Date(Date.UTC(2013, 0, 2)),
  * //     new Date(Date.UTC(2013, 0, 3))]
  *
- * ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2013, 2, 1)), ds.date.MONTH);
+ * ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2013, 2, 1)), ds.time.MONTH);
  * // => [new Date(Date.UTC(2013, 0, 1)),
  * //     new Date(Date.UTC(2013, 1, 1)),
  * //     new Date(Date.UTC(2013, 2, 1))]
  *
- * ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2015, 0, 1)), ds.date.YEAR);
+ * ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2015, 0, 1)), ds.time.YEAR);
  * // => [new Date(Date.UTC(2013, 0, 1)),
  * //     new Date(Date.UTC(2014, 0, 1)),
  * //     new Date(Date.UTC(2015, 0, 1))]
@@ -5274,6 +5274,11 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
 		};
 
 		if (timeRange && context.inputs.length > 0) {
+			// Wrong: must be generated via ds.time.range(start, end, step)
+			// timeRange[0] = startDate
+			// timeRange[1] = step
+			// schwierig dabei: bestimmung des Endes
+			// TESTEN!
 			context.timeRange = context.inputs.length > 1 ? time.range(timeRange[0], new Date((context.inputs.length - 1) * timeRange[1] + timeRange[0].getTime()), timeRange[1]) : [timeRange[0]];
 		}
 
