@@ -316,8 +316,10 @@ var codes = {
 
 function renderChart() {
 	var width = $(window).width() - $("#body nav").outerWidth(true) - 20;
-	var height = $(window).height() - $("header").outerHeight(true)
-		- $("#code").outerHeight(true) + parseInt($("#code a").css("margin-top"), 10);
+	var height = $(window).height()
+		- $("header").outerHeight(true)
+		- ($("#code").outerHeight(true) - $("#code").height())
+		- (-parseInt($("#code a").css("margin-top"), 10));
 
 	chart.width(width).height(height).data(data)();
 }
