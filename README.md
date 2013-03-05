@@ -3,20 +3,19 @@ dataseries.js <sup>v0.1.2</sup>
 
 **A JavaScript data series modeling library.**
 
-The aim of dataseries.js is to provide a lightweight and intuitive
-interface for modeling data series.
+The aim of dataseries.js is to provide a lightweight and intuitive interface for modeling data series.
 
 ## Applications
 
-- Generating test vectors for automated *software tests*
-- Generating data series for *data visualization prototyping*
-- Assessing the robustness and *edge-case behavior* of data visualizations
+- Generate test vectors for automated *software tests*
+- Generate data series for *data visualization prototyping*
+- Assess the robustness and *edge-case behavior* of data visualizations
 
 ## Features
 
 - Data *generation* by sophisticated generators
 - Data *filtering* by applying *predicate functions*
-- Data *transforms* to produce custom data structures
+- Data *transformation* to produce custom data structures
 - and much more
 
 ## Usage
@@ -76,17 +75,34 @@ ds.generators.f(ds.functions.identity)
 // => [{x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2}]
 ```
 
+#### Arbitrarily process data series
+
+```javascript
+ds.generators.f(ds.functions.identity)
+  .inputs(ds.range(2))
+  .call(ds.normalize)
+  .values();
+// => [0, 0.5, 1]
+
+ds.generators.f(ds.functions.identity)
+  .inputs(ds.range(2))
+  .transform(ds.transforms.point)
+  .call(ds.normalize, 0, 1, 'y')
+  .values();
+// => [{x: 0, y: 0}, {x: 1, y: 0.5}, {x: 2, y: 1}]
+```
+
 #### Configure a time dimension on a data series generator
 
 ```javascript
 ds.generators.f(ds.functions.identity)
   .inputs(ds.range(2))
-  .time(new Date(Date.UTC(2013, 0, 1)), ds.time.DAY)
+  .time(new Date(2013, 0, 1), ds.time.DAY)
   .transform(ds.transforms.point)
   .values();
-// => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
-//     {x: new Date(Date.UTC(2013, 0, 2)), y: 1},
-//     {x: new Date(Date.UTC(2013, 0, 3)), y: 2}]
+// => [{x: new Date(2013, 0, 1), y: 0},
+//     {x: new Date(2013, 0, 2), y: 1},
+//     {x: new Date(2013, 0, 3), y: 2}]
 ```
 
 ## Downloads
