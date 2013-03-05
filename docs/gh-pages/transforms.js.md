@@ -15,9 +15,9 @@ ds.transforms.pair(1, 0);
 // => [0, 1]
 
 ds.generators.f(ds.functions.identity)
-    .inputs(ds.range(2))
-    .transform(ds.transforms.pair)
-    .values();
+  .inputs(ds.range(2))
+  .transform(ds.transforms.pair)
+  .values();
 // => [[0, 0], [1, 1], [2, 2]]
 ```
 
@@ -42,9 +42,9 @@ ds.transforms.point(1, 0);
 // => {x: 0, y: 1}
 
 ds.generators.f(ds.functions.identity)
-    .inputs(ds.range(2))
-    .transform(ds.transforms.point)
-    .values();
+  .inputs(ds.range(2))
+  .transform(ds.transforms.point)
+  .values();
 // => [{x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2}]
 ```
 

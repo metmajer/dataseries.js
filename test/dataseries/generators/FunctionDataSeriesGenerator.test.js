@@ -4,13 +4,77 @@ define(["src/dataseries.js"], function(ds) {
 			this.f = this.spy(ds.functions.identity);
 			this.g = ds.generators.f(this.f);
 
+			this.inputs = ds.range(2);
+			this.outputs = ds.range(2);
 			this.filter = this.spy(function(y, x, i) { return true; });
 			this.transform = this.spy(function(y, x, i) { return y; });
-
-			this.inputs = ds.range(2);
 			this.time = { start: new Date(Date.UTC(2013, 0, 1)), precision: ds.time.DAY };
+		},
 
-			this.outputs = ds.range(2);
+		"inputs": {
+			"'values' argument provided": {
+				"'inputs' sets an immutable set of input values": function() {
+					this.g.inputs(this.inputs);
+					buster.assert.equals(this.g.inputs(), this.inputs);
+
+					// check if inputs clones a set of inputs
+					this.inputs.push(3);
+					buster.refute.equals(this.g.inputs(), this.inputs);
+				},
+
+				"'inputs' returns a reference to the generator": function() {
+					var g = this.g.inputs(this.inputs);
+					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
+				},
+
+				"'inputs' throws if 'values' is not an array": function() {
+					var self = this;
+
+					buster.refute.exception(function() {
+						self.g.inputs([]);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.inputs(0);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.inputs("a");
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.inputs(function() {});
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.inputs({});
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.inputs(undefined);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.inputs(null);
+					}, "Error");
+				}
+			},
+
+			"'values' argument omitted": {
+				"'inputs' returns an immutable set of previously set input values": function() {
+					this.g.inputs(this.inputs);
+					buster.assert.equals(this.g.inputs(), this.inputs);
+
+					// check if inputs returns a cloned set of inputs
+					var inputs = this.g.inputs();
+					inputs.push(3);
+					buster.refute.equals(this.g.inputs(), inputs);
+				},
+
+				"'inputs' returns [] if no input values were previously set": function() {
+					buster.assert.equals(this.g.inputs(), []);
+				}
+			}
 		},
 
 		"filter": {
@@ -110,6 +174,105 @@ define(["src/dataseries.js"], function(ds) {
 				}).values();
 
 				buster.assert.equals(this.g.inputs(), this.inputs);
+			}
+		},
+
+		"time": {
+			"'time' arguments provided": {
+				"'time' sets a time range configuration": function() {
+					this.g.time(this.time.start, this.time.precision);
+					buster.assert.equals(this.g.time(), [this.time.start, this.time.precision]);
+				},
+
+				"'time' returns a reference to the generator": function() {
+					var g = this.g.time(this.time.start, this.time.precision);
+					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
+				},
+
+				"'time's 'precision' defaults to ds.time.DAY": function() {
+					var g = this.g.time(this.time.start);
+					buster.assert.equals(this.g.time(), [this.time.start, ds.time.DAY]);
+				},
+
+				"'time' throws if 'start' is not a date": function() {
+					var self = this;
+
+					buster.refute.exception(function() {
+						self.g.time(new Date(), ds.time.DAY);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(0, ds.time.DAY);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time("a", ds.time.DAY);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time([], ds.time.DAY);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(function() {}, ds.time.DAY);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time({}, ds.time.DAY);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(null, ds.time.DAY);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(undefined, ds.time.DAY);
+					}, "Error");
+				},
+
+				"'time' throws if 'start' is provided and 'precision' is not a function or is not a number > 0": function() {
+					var self = this;
+
+					buster.refute.exception(function() {
+						self.g.time(new Date(), 1);
+						self.g.time(new Date(), function() { return 1; });
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(new Date(), 0);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(new Date(), "a");
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(new Date(), []);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(new Date(), {});
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(new Date(), null);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.time(new Date(), undefined);
+					}, "Error");
+				}
+			},
+
+			"'time' arguments omitted": {
+				"'time' returns a previously set time range configuration": function() {
+					this.g.time(this.time.start, this.time.precision);
+					buster.assert.equals(this.g.time(), [this.time.start, this.time.precision]);
+				},
+
+				"'time' returns undefined if no time range configuration was previously set": function() {
+					buster.assert.equals(this.g.time(), undefined);
+				}
 			}
 		},
 
@@ -222,6 +385,62 @@ define(["src/dataseries.js"], function(ds) {
 			}
 		},
 
+		"call": {
+			"'callback' argument provided": {
+				"'call' adds a callback to the callbacks queue": function() {
+					var callback1 = this.spy();
+					var callback2 = this.spy();
+
+					this.g.call(callback1).call(callback2).values();
+					buster.assert(callback1.calledBefore(callback2));
+				},
+
+				"'call' returns a reference to the generator": function() {
+					var g = this.g.call(function() {});
+					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
+				},
+
+				"'call' throws if 'callback' is not a function": function() {
+					var self = this;
+
+					buster.refute.exception(function() {
+						self.g.call(function() {});
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.call(0);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.call("a");
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.call([]);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.call({});
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.call(null);
+					}, "Error");
+
+					buster.assert.exception(function() {
+						self.g.call(undefined);
+					}, "Error");
+				}
+			},
+
+			"'call' relays excess arguments to the callback": function() {
+				var callback = this.spy(function(outputs, a, b) {});
+
+				this.g.inputs(this.inputs).call(callback, 1, 2).values();
+				buster.assert(callback.calledWith(this.outputs, 1, 2));
+			}
+		},
+
 		"values": {
 			"compute": {
 				"'values' invokes 'algorithm' for each input value": function() {
@@ -240,20 +459,16 @@ define(["src/dataseries.js"], function(ds) {
 					"the context gives access to the 'generator'": function() {
 						var self = this;
 
-						self.g.inputs(self.inputs);
-
 						var filter = function(y, x, i) {
 							buster.assert(this.generator.constructor.name, "FunctionDataSeriesGenerator");
 						};
 
-						self.g.filter(filter).values();
+						self.g.inputs(self.inputs).filter(filter).values();
 					},
 
 					"the context gives access to the 'inputs' and readily computed 'outputs' considered for computation": function() {
-						var outputs = [];
 						var self = this;
-
-						self.g.inputs(self.inputs);
+						var outputs = [];
 
 						// consider all outputs for computation
 						var filter = function(y, x, i) {
@@ -280,11 +495,10 @@ define(["src/dataseries.js"], function(ds) {
 							return true;
 						};
 
-						self.g.filter(filter).values();
+						self.g.inputs(self.inputs).filter(filter).values();
 					},
 
 					"the context gives access to an optional 'timeRange'": function() {
-						var timeRange = [];
 						var self = this;
 
 						// no time range configuration provided
@@ -298,30 +512,21 @@ define(["src/dataseries.js"], function(ds) {
 
 						// time range specification provided
 						filter = function(y, x, i) {
-							buster.assert.equals(this.timeRange, [self.time.start]);
-						};
-
-						self.g.inputs([1]).filter(filter).time(this.time.start, this.time.precision).values();
-
-						filter = function(y, x, i) {
 							buster.assert.equals(this.timeRange, ds.time.range(self.time.start, new Date((this.inputs.length - 1) * self.time.precision + self.time.start.getTime()), self.time.precision));
 						};
 
-						self.g.inputs(self.inputs).filter(filter).time(this.time.start, this.time.precision).values();
+						self.g.filter(filter).time(this.time.start, this.time.precision).values();
 					},
 
 					"the filter argument 'x' refers to an input value within (the user-provided) 'inputs'": function() {
 						var inputs = ds.range(-2, 2);
 						var values = [];
 
-						this.g.inputs(inputs);
-
 						var filter = function(y, x, i) {
 							values.push(x);
 						};
 
-						this.g.filter(filter).values();
-
+						this.g.inputs(inputs).filter(filter).values();
 						buster.assert.equals(values, inputs);
 					},
 
@@ -338,7 +543,6 @@ define(["src/dataseries.js"], function(ds) {
 						};
 
 						g.filter(filter).values();
-
 						buster.assert.equals(values, outputs);
 					},
 
@@ -346,20 +550,17 @@ define(["src/dataseries.js"], function(ds) {
 						var inputs = ds.range(-2, 2);
 						var values = [];
 
-						this.g.inputs(inputs);
-
 						var filter = function(y, x, i) {
 							values.push({x: x, i: i});
 						};
 
-						this.g.filter(filter).values();
-
+						this.g.inputs(inputs).filter(filter).values();
 						buster.assert.equals(values, [{x: -2, i: 0}, {x: -1, i: 1}, {x: 0, i: 2}, {x: 1, i: 3}, {x: 2, i: 4}]);
 					},
 
 					"the context persists data throughout all invocations of the filter": function() {
-						var context;
 						var self = this;
+						var context;
 
 						self.g.inputs(self.inputs);
 
@@ -385,31 +586,47 @@ define(["src/dataseries.js"], function(ds) {
 				}
 			},
 
+			"time": {
+				"the time range's points in time are made available via the 'x' parameter of the 'transform' method": function() {
+					var timeRange = ds.time.range(this.time.start, new Date((this.inputs.length - 1) * this.time.precision + this.time.start.getTime()), this.time.precision);
+
+					var transform = function(y, x, i) {
+						buster.assert.equals(timeRange[i], x);
+					};
+
+					this.g.inputs(this.inputs).time(this.time.start, this.time.precision).transform(transform).values();
+				}
+			},
+
 			"transform": {
 				"'values' invokes the transform once for each input value": function() {
 					this.g.inputs(this.inputs).transform(this.transform).values();
 					buster.assert.equals(this.transform.callCount, this.inputs.length);
 				},
 
+				"'values' invokes the transform after the filter": function() {
+					var filter = this.spy(function(y, x, i) { return y; });
+					var transform = this.spy(function(y, x, i) { return y; });
+
+					this.g.inputs(this.inputs).transform(transform).filter(filter).values();
+					buster.assert(transform.calledAfter(filter));
+				},
+
 				"function context": {
 					"the context gives access to the 'generator'": function() {
 						var self = this;
-
-						self.g.inputs(self.inputs);
 
 						var transform = function(y, x, i) {
 							buster.assert(this.generator.constructor.name, "FunctionDataSeriesGenerator");
 						};
 
-						self.g.transform(transform).values();
+						self.g.inputs(self.inputs).transform(transform).values();
 					},
 
 					"the context gives access to the 'inputs' and 'outputs' considered for computation": function() {
+						var self = this;
 						var inputs;
 						var outputs;
-						var self = this;
-
-						self.g.inputs(self.inputs);
 
 						var transform = function(y, x, i) {
 							inputs = this.inputs;
@@ -417,7 +634,7 @@ define(["src/dataseries.js"], function(ds) {
 							return y;
 						};
 
-						self.g.transform(transform).values();
+						self.g.inputs(self.inputs).transform(transform).values();
 
 						buster.assert(_.isArray(inputs));
 						buster.assert.equals(inputs, self.inputs);
@@ -427,7 +644,6 @@ define(["src/dataseries.js"], function(ds) {
 					},
 
 					"the context gives access to an optional 'timeRange'": function() {
-						var timeRange = [];
 						var self = this;
 
 						// no time range configuration provided
@@ -441,23 +657,15 @@ define(["src/dataseries.js"], function(ds) {
 
 						// time range specification provided
 						transform = function(y, x, i) {
-							buster.assert.equals(this.timeRange, [self.time.start]);
-						};
-
-						self.g.inputs([1]).transform(transform).time(this.time.start, this.time.precision).values();
-
-						transform = function(y, x, i) {
 							buster.assert.equals(this.timeRange, ds.time.range(self.time.start, new Date((this.inputs.length - 1) * self.time.precision + self.time.start.getTime()), self.time.precision));
 						};
 
-						self.g.inputs(self.inputs).transform(transform).time(this.time.start, this.time.precision).values();
+						self.g.transform(transform).time(this.time.start, this.time.precision).values();
 					},
 
 					"the transform argument 'x' refers to an input value within the context's 'inputs'": function() {
 						var inputs;
 						var values = [];
-
-						this.g.inputs(ds.range(-2, 2));
 
 						var filter = function(y, x, i) {
 							return x >= 0;
@@ -468,16 +676,13 @@ define(["src/dataseries.js"], function(ds) {
 							values.push(x);
 						};
 
-						this.g.filter(filter).transform(transform).values();
-
+						this.g.inputs(ds.range(-2, 2)).filter(filter).transform(transform).values();
 						buster.assert.equals(values, inputs);
 					},
 
 					"the transform argument 'y' refers to an output value within the context's 'outputs'": function() {
 						var outputs;
 						var values = [];
-
-						this.g.inputs(ds.range(-2, 2));
 
 						var filter = function(y, x, i) {
 							return y >= 0;
@@ -488,16 +693,13 @@ define(["src/dataseries.js"], function(ds) {
 							values.push(y);
 						};
 
-						this.g.filter(filter).transform(transform).values();
-
+						this.g.inputs(ds.range(-2, 2)).filter(filter).transform(transform).values();
 						buster.assert.equals(values, outputs);
 					},
 
 					"the transform argument 'i' refers to the index of 'x' and 'y' within the context's 'inputs' and 'outputs', respectively": function() {
 						var inputs = ds.range(-2, 2);
 						var values = [];
-
-						this.g.inputs(inputs);
 
 						var filter = function(y, x, i) {
 							return x >= 0;
@@ -507,8 +709,7 @@ define(["src/dataseries.js"], function(ds) {
 							values.push({x: x, i: i});
 						};
 
-						this.g.filter(filter).transform(transform).values();
-
+						this.g.inputs(inputs).filter(filter).transform(transform).values();
 						buster.assert.equals(values, [{x: 0, i: 0}, {x: 1, i: 1}, {x: 2, i: 2}]);
 					},
 
@@ -528,7 +729,6 @@ define(["src/dataseries.js"], function(ds) {
 						};
 
 						self.g.transform(transform).values();
-
 						buster.assert.equals(context.sumInputs, 3);
 
 						// check if the context is reset if the generator
@@ -538,23 +738,89 @@ define(["src/dataseries.js"], function(ds) {
 						};
 
 						self.g.transform(transform).values();
-
 						buster.assert.equals(context.sumInputs, undefined);
 					}
 				}
 			},
 
-			"time": {
-				"the time range's points in time are made available via the 'x' parameter of the 'transform' method": function() {
-					var timeRange = ds.time.range(this.time.start, new Date((this.inputs.length - 1) * this.time.precision + this.time.start.getTime()), this.time.precision);
+			"call": {
+				"'values' invokes all callbacks": function() {
+					var callback1 = this.spy();
+					var callback2 = this.spy();
 
-					this.g.inputs(this.inputs);
+					this.g.call(callback1).call(callback2).values();
+					buster.assert(callback1.calledOnce);
+					buster.assert(callback2.calledOnce);
+				},
 
-					var transform = function(y, x, i) {
-						buster.assert.equals(timeRange[i], x);
-					};
+				"'values' invokes the callbacks after the 'transform'": function() {
+					var transform = this.spy(function(y, x, i) { return y; });
+					var callback = this.spy();
 
-					this.g.time(this.time.start, this.time.precision).transform(transform).values();
+					this.g.inputs(this.inputs).call(callback).transform(transform).values();
+					buster.assert(callback.calledAfter(transform));
+				},
+
+				"function context": {
+					"the context gives access to the 'generator'": function() {
+						var self = this;
+
+						var callback = function(outputs) {
+							buster.assert(this.generator.constructor.name, "FunctionDataSeriesGenerator");
+						};
+
+						self.g.inputs(self.inputs).call(callback).values();
+					},
+
+					"the context gives access to the 'inputs' and 'outputs'": function() {
+						var self = this;
+						var _inputs;
+						var _outputs;
+
+						var callback = function(outputs) {
+							_inputs = this.inputs;
+							_outputs = this.outputs;
+						};
+
+						self.g.inputs(self.inputs).call(callback).values();
+						buster.assert.equals(_inputs, self.inputs);
+						buster.assert.equals(_outputs, self.outputs);
+					},
+
+					"the context gives access to an optional 'timeRange'": {
+						"time range configuration omitted": function() {
+							var self = this;
+
+							var callback = function(outputs) {
+								buster.assert.equals(this.timeRange, undefined);
+							};
+
+							self.g.inputs(self.inputs).call(callback).values();
+						},
+
+						"time range configuration omitted": function() {
+							var self = this;
+
+							var callback = function(outputs) {
+								buster.assert.equals(this.timeRange, ds.time.range(self.time.start, new Date((this.inputs.length - 1) * self.time.precision + self.time.start.getTime()), self.time.precision));
+							};
+
+							self.g.inputs(self.inputs).time(this.time.start, this.time.precision).call(callback).values();
+						}
+					},
+
+					"the call argument 'outputs' refers to the current 'outputs'": function() {
+						var callback1 = this.spy(function(outputs) { return ds.initialize(1, outputs.length); });
+						var callback2 = this.spy(function(outputs) { return ds.initialize(2, outputs.length); });
+
+						var transform = function(y, x, i) {
+							return 0;
+						};
+
+						this.g.inputs(this.inputs).transform(transform).call(callback1).call(callback2).values();
+						buster.assert(callback1.calledWith(ds.initialize(0, this.inputs.length)));
+						buster.assert(callback2.calledWith(ds.initialize(1, this.inputs.length)));
+					}
 				}
 			},
 
@@ -565,177 +831,11 @@ define(["src/dataseries.js"], function(ds) {
 				// check if values returns a cloned set of outputs
 				var outputs = this.g.values();
 				outputs.push(0);
-
 				buster.refute.equals(this.g.values(), outputs);
 			},
 
 			"'values' returns [] if inputs is empty": function() {
 				buster.assert(this.g.values(), []);
-			}
-		},
-
-		"inputs": {
-			"'values' argument provided": {
-				"'inputs' sets an immutable set of input values": function() {
-					this.g.inputs(this.inputs);
-					buster.assert.equals(this.g.inputs(), this.inputs);
-
-					// check if inputs clones a set of inputs
-					this.inputs.push(3);
-					buster.refute.equals(this.g.inputs(), this.inputs);
-				},
-
-				"'inputs' returns a reference to the generator": function() {
-					var g = this.g.inputs(this.inputs);
-					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
-				},
-
-				"'inputs' throws if 'values' is not an array": function() {
-					var self = this;
-
-					buster.refute.exception(function() {
-						self.g.inputs([]);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.inputs(0);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.inputs("a");
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.inputs(function() {});
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.inputs({});
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.inputs(undefined);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.inputs(null);
-					}, "Error");
-				}
-			},
-
-			"'values' argument omitted": {
-				"'inputs' returns an immutable set of previously set input values": function() {
-					this.g.inputs(this.inputs);
-					buster.assert.equals(this.g.inputs(), this.inputs);
-
-					// check if inputs returns a cloned set of inputs
-					var inputs = this.g.inputs();
-					inputs.push(3);
-					buster.refute.equals(this.g.inputs(), inputs);
-				},
-
-				"'inputs' returns [] if no input values were previously set": function() {
-					buster.assert.equals(this.g.inputs(), []);
-				}
-			}
-		},
-
-		"time": {
-			"'time' arguments provided": {
-				"'time' sets a time range configuration": function() {
-					this.g.time(this.time.start, this.time.precision);
-					buster.assert.equals(this.g.time(), [this.time.start, this.time.precision]);
-				},
-
-				"'time' returns a reference to the generator": function() {
-					var g = this.g.time(this.time.start, this.time.precision);
-					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
-				},
-
-				"'time's 'precision' defaults to ds.time.DAY": function() {
-					var g = this.g.time(this.time.start);
-					buster.assert.equals(this.g.time(), [this.time.start, ds.time.DAY]);
-				},
-
-				"'time' throws if 'start' is not a date": function() {
-					var self = this;
-
-					buster.refute.exception(function() {
-						self.g.time(new Date(), ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(0, ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time("a", ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time([], ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(function() {}, ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time({}, ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(null, ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(undefined, ds.time.DAY);
-					}, "Error");
-				},
-
-				"'time' throws if 'start' is provided and 'precision' is not a function or is not a number > 0": function() {
-					var self = this;
-
-					buster.refute.exception(function() {
-						self.g.time(new Date(), 1);
-						self.g.time(new Date(), function() { return 1; });
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), 0);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), "a");
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), []);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), {});
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), null);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), undefined);
-					}, "Error");
-				}
-			},
-
-			"'time' arguments omitted": {
-				"'time' returns a previously set time range configuration": function() {
-					this.g.time(this.time.start, this.time.precision);
-					buster.assert.equals(this.g.time(), [this.time.start, this.time.precision]);
-				},
-
-				"'time' returns undefined if no time range configuration was previously set": function() {
-					buster.assert.equals(this.g.time(), undefined);
-				}
 			}
 		}
 	});

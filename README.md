@@ -38,13 +38,13 @@ ds.range(0, 2, 0.5);
 
 ```javascript
 ds.generators.f(ds.functions.linear, { a: 2, b: 1 })
-    .inputs(ds.range(2))
-    .values();
+  .inputs(ds.range(2))
+  .values();
 // f(x) = 2·x + 1 for x in [0, 1, 2] => [1, 3, 5]
 
 ds.generators.f(ds.functions.exp, { a: 2 })
-    .inputs(ds.range(2))
-    .values();
+  .inputs(ds.range(2))
+  .values();
 // f(x) = 2ˣ for x in [0, 1, 2] => [1, 2, 4]
 ```
 
@@ -52,9 +52,9 @@ ds.generators.f(ds.functions.exp, { a: 2 })
 
 ```javascript
 ds.generators.f(ds.functions.identity)
-    .inputs(ds.range(-2, 2))
-    .filter(ds.predicates.isPositiveNumber)
-    .values();
+  .inputs(ds.range(-2, 2))
+  .filter(ds.predicates.isPositiveNumber)
+  .values();
 // => [0, 1, 2]
 ```
 
@@ -62,17 +62,17 @@ ds.generators.f(ds.functions.identity)
 
 ```javascript
 ds.generators.f(ds.functions.identity)
-    .inputs(ds.range(-2, 2))
-    .transform(function(y, x, i) {
-        return y >= 0 ? y : null;
-    })
-    .values();
+  .inputs(ds.range(-2, 2))
+  .transform(function(y, x, i) {
+      return y >= 0 ? y : null;
+  })
+  .values();
 // => [null, null, 0, 1, 2]
 
 ds.generators.f(ds.functions.identity)
-    .inputs(ds.range(2))
-    .transform(ds.transforms.point)
-    .values();
+  .inputs(ds.range(2))
+  .transform(ds.transforms.point)
+  .values();
 // => [{x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2}]
 ```
 
@@ -80,10 +80,10 @@ ds.generators.f(ds.functions.identity)
 
 ```javascript
 ds.generators.f(ds.functions.identity)
-    .inputs(ds.range(2))
-    .time(new Date(Date.UTC(2013, 0, 1)), ds.time.DAY)
-    .transform(ds.transforms.point)
-    .values();
+  .inputs(ds.range(2))
+  .time(new Date(Date.UTC(2013, 0, 1)), ds.time.DAY)
+  .transform(ds.transforms.point)
+  .values();
 // => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
 //     {x: new Date(Date.UTC(2013, 0, 2)), y: 1},
 //     {x: new Date(Date.UTC(2013, 0, 3)), y: 2}]

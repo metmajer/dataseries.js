@@ -2,36 +2,104 @@
 
 # dataseries.js FunctionDataSeriesGenerator module
 
-The `FunctionDataSeriesGenerator` initializes data series from the outputs
-of a function *y = f(x)*.<br>
-See the [`ds.generators.f`](ds.generators.html#f) generator factory function
-for preferred construction.
+The `FunctionDataSeriesGenerator` initializes data series from the outputs of a function *y = f(x)*.<br>
+See the [`ds.generators.f`](ds.generators.html#f) generator factory function for preferred construction.
+
+The generator provides a convenient builder syntax which greatly facilitates the filtering, transforming
+and otherwise processing of data via the generator's `filter`, `transform` and `call` methods. After the
+generator was configured, the resulting data series is computed by invoking the `values` method, which
+results in the execution of the following processing stages:
+
+1. Computation: *y = f(x)*
+2. Filtering
+3. Transformation
+4. (Otherwise) Processing
+
+The callbacks provided to filter`, `transform` and `call` are executed under the following `this` context:
+- `generator`
+- `inputs`
+- `outputs`
+- `timeRange` (or undefined if no time range configuration was provided)
+
+See the [`filter`](#filter), [`transform`](#transform) and [`call`](#call) methods for precise definitions
+of the respective contexts.
+
+## <a name="call" href="#">call</a>(callback)
+
+Adds a callback for otherwise processing of the resulting data series to the end of the processing chain.
+Multiple callbacks can be added by invoking `call` multiple times. Callbacks are executed in the given order.
+
+### callback:
+
+The callback is a function *f(outputs)* with the parameters (excess arguments to `call` are relayed to the callback):
+- `outputs` the current set of outputs
+
+The computation context of a callback is defined as:
+- `generator`
+- `inputs`
+- `outputs`
+- `timeRange` (or undefined if no time range configuration was provided)
+
+### Examples:
+
+```javascript
+ds.generators.f(ds.functions.identity)
+  .inputs(ds.range(2))
+  .values();
+// => [0, 1, 2]
+
+ds.generators.f(ds.functions.identity)
+  .inputs(ds.range(2))
+  .call(ds.normalize, 0, 1)
+  .values();
+// => [0, 0.5, 1]
+
+ds.generators.f(ds.functions.identity)
+  .inputs(ds.range(2))
+  .transform(ds.transforms.point)
+  .call(ds.normalize, 0, 1, 'y')
+  .values();
+// => [{x: 0, y: 0},
+//     {x: 1, y: 0.5},
+//     {x: 2, y: 1}]
+```
+
+### Params:
+
+* **Function** *callback* A callback.
+
+### Returns:
+
+* **FunctionDataSeriesGenerator** Returns a reference to the generator.
+
+### Throws:
+
+* **Error** Throws if `callback` is not a function.
 
 ## <a name="filter" href="#">filter</a>([callback])
 
-Gets, sets or unsets a filter.
+Gets, sets or unsets a filter to be executed after computation.
 The method returns a previously set filter if `callback` is omitted.
 The method sets a filter if `callback` is provided and a function, or unsets a previously set filter if `callback` is set to `undefined`.
 
 ### callback:
 
-The callback determines whether an output value, as computed by the generator, shall be included in the resulting
-set of output values or not by either returning a truthy or a falsy value, respectively. If the value is rejected,
-both the input value and the rejected output value will be evicted from the computation context, see below,
-and will thus not be available in subsequent stages.
+The callback determines if a computed output value shall be included in the resulting set of outputs of the filter
+by returning either a truthy or a falsy value. If a value was rejected, both the input value and the output value
+are evicted from the computation context and will thus not be available in subsequent processing stages.
 
 The callback is a function *f(y, x, i)* with the parameters:
-- the input value `x`
-- the output value `y` as computed by the generator
-- the index `i` of the input value `x` within the set of `inputs`
+- `x` the input value
+- `y` the output value (as computed by the generator)
+- `i` the index of the input value `x` within the set of inputs
 
-The computation context, i.e., `this`, of a filter includes:
-- a `generator`
-- the `inputs`
-- the readily-computed `outputs` (`this.outputs[j] = undefined` for *j > i*)
-- an optional `timeRange` (or undefined)
+The computation context of a filter is defined as:
+- `generator`
+- `inputs`
+- `outputs` the readily computed outputs (`this.outputs[j] = undefined` for *j > i*)
+- `timeRange` (or undefined if no time range configuration was provided)
 
-See the [`ds.predicates`](ds.predicates.html) module for a list of provided predicates that facilitate filtering.
+See the [`ds.predicates`](ds.predicates.html) module for a list of provided predicates to facilitate filtering.
 
 ### Examples:
 
@@ -91,19 +159,22 @@ g.values();
 // => [0, 1, 2]
 
 g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.DAY)
- .transform(ds.transforms.point).values();
+ .transform(ds.transforms.point)
+ .values();
 // => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
 //     {x: new Date(Date.UTC(2013, 0, 2)), y: 1},
 //     {x: new Date(Date.UTC(2013, 0, 3)), y: 2}]
 
 g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.MONTH)
- .transform(ds.transforms.point).values();
+ .transform(ds.transforms.point)
+ .values();
 // => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
 //     {x: new Date(Date.UTC(2013, 1, 1)), y: 1},
 //     {x: new Date(Date.UTC(2013, 2, 1)), y: 2}]
 
 g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.YEAR)
- .transform(ds.transforms.point).values();
+ .transform(ds.transforms.point)
+ .values();
 // => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
 //     {x: new Date(Date.UTC(2014, 0, 1)), y: 1},
 //     {x: new Date(Date.UTC(2015, 0, 1)), y: 2}]
@@ -127,7 +198,7 @@ g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.YEAR)
 
 ## <a name="transform" href="#">transform</a>([callback])
 
-Gets, sets or unsets a transform.
+Gets, sets or unsets a transform to be executed after filtering.
 The method returns a previously set transform if `callback` is omitted.
 The method sets a transform if `callback` is provided and a function, or unsets a previously set transform if `callback` is set to `undefined`.
 
@@ -136,15 +207,15 @@ The method sets a transform if `callback` is provided and a function, or unsets 
 The callback determines the effective data structure for the given arguments.
 
 The callback is a function *f(x, y, i)* with the parameters:
-- the input value `x`
-- the output value `y` as computed and filtered by the generator
-- the index `i` of the input value `x` within the set of `inputs`
+- `x` the input value
+- `y` the output value (as computed and filtered by the generator)
+- `i` the index of the input value `x` within the set of inputs
 
-The computation context, i.e., `this`, of a transform includes:
-- a `generator`
-- the filtered `inputs`
-- the filtered `outputs`
-- an optional `timeRange` (or undefined)
+The computation context of a transform is defined as:
+- `generator`
+- `inputs`
+- `outputs`
+- `timeRange` (or undefined if no time range configuration was provided)
 
 See the [`ds.transforms`](ds.transforms.html) module for a list of provided transforms.
 
@@ -186,8 +257,8 @@ g.inputs(ds.range(-2, 2)).transform(function(y, x, i) {
 
 ## <a name="values" href="#">values</a>()
 
-Computes the output values which correspond to the set of generator inputs and optionally filters and transforms them.
+Computes, filters, transforms and otherwise processes a data series from a set of input values.
 
 ### Returns:
 
-* **Array** Returns the generated data series.
+* **Array** Returns the resulting data series.
