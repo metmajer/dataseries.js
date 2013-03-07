@@ -5153,7 +5153,13 @@ exports.WEEK = 6048e5;
  */
 exports.MONTH = function(date) {
 	if (!_.isDate(date)) throw new Error("MONTH(): 'date' must be a date");
-	return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate() * exports.DAY;
+	var offset =  new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate() * exports.DAY;
+
+	// correct for daylight savings
+	var correction = new Date(date.getTime() + offset).getHours();
+	if (correction == 23) correction = -1;
+
+	return offset - correction * exports.HOUR;
 };
 
 /**
@@ -5164,59 +5170,63 @@ exports.MONTH = function(date) {
  */
 exports.YEAR = function(date) {
 	if (!_.isDate(date)) throw new Error("YEAR(): 'date' must be a date");
-	return new Date(Date.UTC(date.getUTCFullYear(), 11, 31)) - new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
+	return new Date(date.getFullYear(), 11, 31) - new Date(date.getFullYear(), 0, 0);
 };
 
 /**
- * Initializes a time range from the interval [`start`, `end`] with values equidistantly spaced by `step`.
- * The resulting time range will include the `end` value if `Math.abs(end - start)` is integer divisible by `step`.
+ * Creates a range of date objects beginning at 'start' and spaced by 'step'.
+ * If 'end' is a date, it will mark the end of the range. Note that, depending on the choice of `step`,
+ * the 'end' value is only included in the reuslt if `Math.abs(end - start)` is integer divisible by `step`,
+ * assuming that `step` is a constant. If 'end' is an integer number > 0, it determines the length of the result.
  *
  * ### Examples:
  *
  * ```javascript
- * ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2013, 0, 3)));
- * // => [new Date(Date.UTC(2013, 0, 1)),
- * //     new Date(Date.UTC(2013, 0, 2)),
- * //     new Date(Date.UTC(2013, 0, 3))]
+ * ds.time.range(new Date(2013, 0, 1), new Date(2013, 0, 3));
+ * // => [new Date(2013, 0, 1),
+ * //     new Date(2013, 0, 2),
+ * //     new Date(2013, 0, 3)]
  *
- * ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2013, 2, 1)), ds.time.MONTH);
- * // => [new Date(Date.UTC(2013, 0, 1)),
- * //     new Date(Date.UTC(2013, 1, 1)),
- * //     new Date(Date.UTC(2013, 2, 1))]
+ * ds.time.range(new Date(2013, 0, 1), new Date(2013, 2, 1), ds.time.MONTH);
+ * // => [new Date(2013, 0, 1),
+ * //     new Date(2013, 1, 1),
+ * //     new Date(2013, 2, 1)]
  *
- * ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2015, 0, 1)), ds.time.YEAR);
- * // => [new Date(Date.UTC(2013, 0, 1)),
- * //     new Date(Date.UTC(2014, 0, 1)),
- * //     new Date(Date.UTC(2015, 0, 1))]
+ * ds.time.range(new Date(2013, 0, 1), new Date(2015, 0, 1), ds.time.YEAR);
+ * // => [new Date(2013, 0, 1),
+ * //     new Date(2014, 0, 1),
+ * //     new Date(2015, 0, 1)]
  * ```
  *
- * @param  {Date} start The start value of the interval.
- * @param  {Date} end The end value of the interval.
- * @param  {Function(Date):Number|Number} [step=ds.time.DAY] The step size of the interval (in milliseconds): either a function returning an appropriate step size or a number (> 0).
- * @return {Array<Date>} Returns the initialized time range.
- * @throws {Error} Throws if `start` or `end` is not a date.
- * @throws {Error} Throws if `start` >= `end`.
+ * @param  {Date} start The start date of the range.
+ * @param  {Date|Number} end The end date of the range or an integer (> 0) determing the length of the resulting range.
+ * @param  {Function(Date):Number|Number} [step=ds.time.DAY] The step size of the range (in milliseconds): either a function returning an appropriate step size or a number (> 0).
+ * @return {Array<Date>} Returns the created range.
+ * @throws {Error} Throws if `start` is not a date.
+ * @throws {Error} Throws if `end` is a date and `start` >= `end`.
+ * @throws {Error} Throws if `end` is not a date or is not an integer > 0.
  * @throws {Error} Throws if `step` is not a function or is not a number > 0.
  */
 exports.range = function range(start, end, step) {
 	if (arguments.length < 3) step = exports.DAY;
 
 	if (!_.isDate(start)) throw new Error("range(): start must be a date");
-	if (!_.isDate(end)) throw new Error("range(): end must be a date");
-	if (!(start < end)) throw new Error("range(): start must be < end");
+	if (_.isDate(end) && start >= end) throw new Error("range(): start must be < end");
+	if (!(_.isDate(end) || predicates.isPositiveInteger(end, false))) throw new Error("range(): end must be a date or an integer > 0");
 	if (!(_.isFunction(step) || predicates.isPositiveNumber(step, false))) throw new Error("range(): step must be a function or a number > 0");
 
-	function stepSize(value) {
-		return _.isFunction(step) ? step(value) : step;
-	}
+	var isEndDate = _.isDate(end);
+	var isStepFunction = _.isFunction(step);
 
 	var series = [];
 
 	var value = start;
-	do {
+	var i = isEndDate ? value : 1;
+	while (i <= end) {
 		series.push(value);
-		value = new Date(value.getTime() + stepSize(value));
-	} while (value <= end);
+		value = new Date(value.getTime() + (isStepFunction ? step(value) : step));
+		i = isEndDate ? value : i + 1;
+	}
 
 	return series;
 };
@@ -5274,16 +5284,11 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
 		};
 
 		if (timeRange && context.inputs.length > 0) {
-			// Wrong: must be generated via ds.time.range(start, end, step)
-			// timeRange[0] = startDate
-			// timeRange[1] = step
-			// schwierig dabei: bestimmung des Endes
-			// TESTEN!
-			context.timeRange = context.inputs.length > 1 ? time.range(timeRange[0], new Date((context.inputs.length - 1) * timeRange[1] + timeRange[0].getTime()), timeRange[1]) : [timeRange[0]];
+			context.timeRange = time.range(timeRange[0], context.inputs.length, timeRange[1]);
 		}
 
 		return context;
-	};
+	}
 
 	var _computeAndFilterOutputs = function(context) {
 		var acceptedInputs = new Array(0);
@@ -5420,26 +5425,26 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * g.values();
  * // => [0, 1, 2]
  *
- * g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.DAY)
+ * g.time(new Date(2013, 0, 1), ds.time.DAY)
  *  .transform(ds.transforms.point)
  *  .values();
- * // => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
- * //     {x: new Date(Date.UTC(2013, 0, 2)), y: 1},
- * //     {x: new Date(Date.UTC(2013, 0, 3)), y: 2}]
+ * // => [{x: new Date(2013, 0, 1), y: 0},
+ * //     {x: new Date(2013, 0, 2), y: 1},
+ * //     {x: new Date(2013, 0, 3), y: 2}]
  *
- * g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.MONTH)
+ * g.time(new Date(2013, 0, 1), ds.time.MONTH)
  *  .transform(ds.transforms.point)
  *  .values();
- * // => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
- * //     {x: new Date(Date.UTC(2013, 1, 1)), y: 1},
- * //     {x: new Date(Date.UTC(2013, 2, 1)), y: 2}]
+ * // => [{x: new Date(2013, 0, 1), y: 0},
+ * //     {x: new Date(2013, 1, 1), y: 1},
+ * //     {x: new Date(2013, 2, 1), y: 2}]
  *
- * g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.YEAR)
+ * g.time(new Date(2013, 0, 1), ds.time.YEAR)
  *  .transform(ds.transforms.point)
  *  .values();
- * // => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
- * //     {x: new Date(Date.UTC(2014, 0, 1)), y: 1},
- * //     {x: new Date(Date.UTC(2015, 0, 1)), y: 2}]
+ * // => [{x: new Date(2013, 0, 1), y: 0},
+ * //     {x: new Date(2014, 0, 1), y: 1},
+ * //     {x: new Date(2015, 0, 1), y: 2}]
  * ```
  *
  * @param  {Date} start A start date.
@@ -5816,10 +5821,17 @@ define('dataseries/range',[
 
 
 /**
- * Initializes a data series with values from the interval [`start`, `end`] with values equidistantly spaced by `step`.
- * The resulting series will include the `end` value if `Math.abs(end - start)` is integer divisible by `step`.
+ * Creates a numeric range of floats ranging from 'start' to 'end' with values equidistantly spaced by 'step'.
+ * Note that, depending on the choice of 'step', the 'end' value is only included in the result if
+ * `Math.abs(end - start)` is integer divisible by `step`.
  *
  * ### Examples:
+ *
+ * ds.range(2);
+ * // => [0, 1, 2]
+ *
+ * ds.range(0, 2);
+ * // => [0, 1, 2]
  *
  * ```javascript
  * ds.range(0, 2, 1);
@@ -5833,18 +5845,12 @@ define('dataseries/range',[
  *
  * ds.range(-0.5, -2.8, 0.5);
  * // => [-0.5, -1, -1.5, -2, -2.5]
- *
- * ds.range(0, 2);
- * // => [0, 1, 2]
- *
- * ds.range(2);
- * // => [0, 1, 2]
  * ```
  *
- * @param  {Number} [start=0] The start value of the interval.
- * @param  {Number} end The end value of the interval.
- * @param  {Number} [step=1] The step size of the interval (>= 0).
- * @return {Array<Number>} Returns the initialized (numeric) data series.
+ * @param  {Number} [start=0] The start value of the range.
+ * @param  {Number} end The end value of the range (not necessarily included).
+ * @param  {Number} [step=1] The step size of the range (> 0).
+ * @return {Array<Number>} Returns the created range.
  * @throws {Error} Throws if `start`, `end` or `step` is not a number.
  * @throws {Error} Throws if `step` is <= 0.
  */

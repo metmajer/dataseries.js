@@ -8,7 +8,7 @@ define(["src/dataseries.js"], function(ds) {
 			this.outputs = ds.range(2);
 			this.filter = this.spy(function(y, x, i) { return true; });
 			this.transform = this.spy(function(y, x, i) { return y; });
-			this.time = { start: new Date(Date.UTC(2013, 0, 1)), precision: ds.time.DAY };
+			this.time = {start: new Date(2013, 0, 1), precision: ds.time.DAY};
 		},
 
 		"inputs": {
@@ -588,13 +588,22 @@ define(["src/dataseries.js"], function(ds) {
 
 			"time": {
 				"the time range's points in time are made available via the 'x' parameter of the 'transform' method": function() {
-					var timeRange = ds.time.range(this.time.start, new Date((this.inputs.length - 1) * this.time.precision + this.time.start.getTime()), this.time.precision);
+					this.g.inputs(this.inputs);
 
-					var transform = function(y, x, i) {
-						buster.assert.equals(timeRange[i], x);
-					};
+					var dailyRange = ds.time.range(this.time.start, this.inputs.length, ds.time.DAY);
+					this.g.time(this.time.start, ds.time.DAY).transform(function(y, x, i) {
+						buster.assert.equals(dailyRange[i], x);
+					}).values();
 
-					this.g.inputs(this.inputs).time(this.time.start, this.time.precision).transform(transform).values();
+					var monthlyRange = ds.time.range(this.time.start, this.inputs.length, ds.time.MONTH);
+					this.g.time(this.time.start, ds.time.MONTH).transform(function(y, x, i) {
+						buster.assert.equals(monthlyRange[i], x);
+					}).values();
+
+					var yearlyRange = ds.time.range(this.time.start, this.inputs.length, ds.time.YEAR);
+					this.g.time(this.time.start, ds.time.YEAR).transform(function(y, x, i) {
+						buster.assert.equals(yearlyRange[i], x);
+					}).values();
 				}
 			},
 

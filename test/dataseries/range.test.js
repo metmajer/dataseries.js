@@ -11,12 +11,7 @@ define(["src/dataseries/range.js"], function(range) {
 				buster.assert.equals(range(-0.5, -2.8, 0.5), [-0.5, -1, -1.5, -2, -2.5]);
 			},
 
-			"'range' returns an interval ['start', 'end'] with values equidistantly spaced by 1 if 'step' is not provided": function() {
-				buster.assert.equals(range(0, 2), [0, 1, 2]);
-				buster.assert.equals(range(0, -2), [0, -1, -2]);
-			},
-
-			"'range' returns an interval [0, end] with values equidistantly spaced by 1 if 'start' and 'step' are not provided": function() {
+			"'range' returns an interval [0, end] with values equidistantly spaced by 1 if only a single argument is provided": function() {
 				buster.assert.equals(range(2), [0, 1, 2]);
 			},
 
@@ -29,6 +24,11 @@ define(["src/dataseries/range.js"], function(range) {
 			"'range' returns ['start'] if 'step' is greater than Math.abs('end' - 'start')": function() {
 				buster.assert.equals(range(0, 2, 3), [0]);
 				buster.assert.equals(range(0, -2, 3), [0]);
+			},
+
+			"'range's 'step' defaults to 1": function() {
+				buster.assert.equals(range(0, 2), [0, 1, 2]);
+				buster.assert.equals(range(0, -2), [0, -1, -2]);
 			},
 
 			"'range' throws if 'start' is not a number": function() {

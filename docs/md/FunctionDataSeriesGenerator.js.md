@@ -158,26 +158,26 @@ var g = ds.generators.f(ds.functions.identity).inputs(ds.range(2));
 g.values();
 // => [0, 1, 2]
 
-g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.DAY)
+g.time(new Date(2013, 0, 1), ds.time.DAY)
  .transform(ds.transforms.point)
  .values();
-// => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
-//     {x: new Date(Date.UTC(2013, 0, 2)), y: 1},
-//     {x: new Date(Date.UTC(2013, 0, 3)), y: 2}]
+// => [{x: new Date(2013, 0, 1), y: 0},
+//     {x: new Date(2013, 0, 2), y: 1},
+//     {x: new Date(2013, 0, 3), y: 2}]
 
-g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.MONTH)
+g.time(new Date(2013, 0, 1), ds.time.MONTH)
  .transform(ds.transforms.point)
  .values();
-// => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
-//     {x: new Date(Date.UTC(2013, 1, 1)), y: 1},
-//     {x: new Date(Date.UTC(2013, 2, 1)), y: 2}]
+// => [{x: new Date(2013, 0, 1), y: 0},
+//     {x: new Date(2013, 1, 1), y: 1},
+//     {x: new Date(2013, 2, 1), y: 2}]
 
-g.time(new Date(Date.UTC(2013, 0, 1)), ds.time.YEAR)
+g.time(new Date(2013, 0, 1), ds.time.YEAR)
  .transform(ds.transforms.point)
  .values();
-// => [{x: new Date(Date.UTC(2013, 0, 1)), y: 0},
-//     {x: new Date(Date.UTC(2014, 0, 1)), y: 1},
-//     {x: new Date(Date.UTC(2015, 0, 1)), y: 2}]
+// => [{x: new Date(2013, 0, 1), y: 0},
+//     {x: new Date(2014, 0, 1), y: 1},
+//     {x: new Date(2015, 0, 1), y: 2}]
 ```
 
 ### Params:

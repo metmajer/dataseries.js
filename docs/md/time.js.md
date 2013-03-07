@@ -58,44 +58,48 @@ The number of milliseconds in the year of a particular date.
 
 ## <a name="range" href="#">range</a>(start, end, [step=ds.time.DAY])
 
-Initializes a time range from the interval [`start`, `end`] with values equidistantly spaced by `step`.
-The resulting time range will include the `end` value if `Math.abs(end - start)` is integer divisible by `step`.
+Creates a range of date objects beginning at 'start' and spaced by 'step'.
+If 'end' is a date, it will mark the end of the range. Note that, depending on the choice of `step`,
+the 'end' value is only included in the reuslt if `Math.abs(end - start)` is integer divisible by `step`,
+assuming that `step` is a constant. If 'end' is an integer number > 0, it determines the length of the result.
 
 ### Examples:
 
 ```javascript
-ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2013, 0, 3)));
-// => [new Date(Date.UTC(2013, 0, 1)),
-//     new Date(Date.UTC(2013, 0, 2)),
-//     new Date(Date.UTC(2013, 0, 3))]
+ds.time.range(new Date(2013, 0, 1), new Date(2013, 0, 3));
+// => [new Date(2013, 0, 1),
+//     new Date(2013, 0, 2),
+//     new Date(2013, 0, 3)]
 
-ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2013, 2, 1)), ds.time.MONTH);
-// => [new Date(Date.UTC(2013, 0, 1)),
-//     new Date(Date.UTC(2013, 1, 1)),
-//     new Date(Date.UTC(2013, 2, 1))]
+ds.time.range(new Date(2013, 0, 1), new Date(2013, 2, 1), ds.time.MONTH);
+// => [new Date(2013, 0, 1),
+//     new Date(2013, 1, 1),
+//     new Date(2013, 2, 1)]
 
-ds.time.range(new Date(Date.UTC(2013, 0, 1)), new Date(Date.UTC(2015, 0, 1)), ds.time.YEAR);
-// => [new Date(Date.UTC(2013, 0, 1)),
-//     new Date(Date.UTC(2014, 0, 1)),
-//     new Date(Date.UTC(2015, 0, 1))]
+ds.time.range(new Date(2013, 0, 1), new Date(2015, 0, 1), ds.time.YEAR);
+// => [new Date(2013, 0, 1),
+//     new Date(2014, 0, 1),
+//     new Date(2015, 0, 1)]
 ```
 
 ### Params:
 
-* **Date** *start* The start value of the interval.
+* **Date** *start* The start date of the range.
 
-* **Date** *end* The end value of the interval.
+* **Date|Number** *end* The end date of the range or an integer (> 0) determing the length of the resulting range.
 
-* **Function(Date):Number|Number** *[step=ds.time.DAY]* The step size of the interval (in milliseconds): either a function returning an appropriate step size or a number (> 0).
+* **Function(Date):Number|Number** *[step=ds.time.DAY]* The step size of the range (in milliseconds): either a function returning an appropriate step size or a number (> 0).
 
 ### Returns:
 
-* **Array<Date>** Returns the initialized time range.
+* **Array<Date>** Returns the created range.
 
 ### Throws:
 
-* **Error** Throws if `start` or `end` is not a date.
+* **Error** Throws if `start` is not a date.
 
-* **Error** Throws if `start` >= `end`.
+* **Error** Throws if `end` is a date and `start` >= `end`.
+
+* **Error** Throws if `end` is not a date or is not an integer > 0.
 
 * **Error** Throws if `step` is not a function or is not a number > 0.
