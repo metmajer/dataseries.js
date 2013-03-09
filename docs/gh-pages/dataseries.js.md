@@ -8,10 +8,6 @@ This script is freely distributable under the terms of the MIT license.
 
 ## Modules
 
-### <a href="ds.generators">ds.generators</a>
-
-- <a href="ds.generators#f">f</a>
-
 ### <a href="ds.functions">ds.functions</a>
 
 - <a href="ds.functions#cos">cos</a>
@@ -31,6 +27,10 @@ This script is freely distributable under the terms of the MIT license.
 - <a href="ds.functions#sin">sin</a>
 
 - <a href="ds.functions#square">square</a>
+
+### <a href="ds.generators">ds.generators</a>
+
+- <a href="ds.generators#f">f</a>
 
 ### <a href="ds.initialize">ds.initialize</a>
 

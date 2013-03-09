@@ -78,67 +78,61 @@ define(["src/dataseries.js"], function(ds) {
 		},
 
 		"filter": {
-			"'callback' argument provided": {
-				"'filter' sets a filter": function() {
-					this.g.filter(this.filter);
-					buster.assert.equals(this.g.filter(), this.filter);
-				},
-
-				"'filter' resets a previously set filter if 'callback' is set to undefined": function() {
-					this.g.filter(this.filter);
-					buster.assert.equals(this.g.filter(), this.filter);
-
-					this.g.filter(undefined);
-					buster.assert.equals(this.g.filter(), undefined);
-				},
-
-				"'filter' returns a reference to the generator": function() {
-					var g = this.g.filter(this.filter);
-					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
-
-					g = this.g.filter(undefined);
-					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
-				},
-
-				"'filter' throws if 'callback' is not a function": function() {
-					var self = this;
-
-					buster.refute.exception(function() {
-						self.g.filter(undefined);
-						self.g.filter(function() {});
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.filter(0);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.filter("a");
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.filter([]);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.filter({});
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.filter(null);
-					}, "Error");
-				}
+			"'filter' sets a filter": function() {
+				this.g.inputs(this.inputs).filter(this.filter).values();
+				buster.assert(this.filter.called);
 			},
 
-			"'callback' argument omitted": {
-				"'filter' returns a previously set filter": function() {
-					this.g.filter(this.filter);
-					buster.assert.equals(this.g.filter(), this.filter);
-				},
+			"'filter' overrides a previously set filter": function() {
+				this.g.inputs(this.inputs).filter(this.filter);
 
-				"'filter' returns undefined if no filter was previously set": function() {
-					buster.assert.equals(this.g.filter(), undefined);
-				}
+				var filter = this.spy();
+				this.g.filter(filter).values();
+
+				buster.refute(this.filter.called);
+			},
+
+			"'filter' resets a previously set filter if 'callback' is set to undefined": function() {
+				this.g.inputs(this.inputs).filter(this.filter);
+				this.g.filter().values();
+				buster.refute(this.filter.called);
+			},
+
+			"'filter' returns a reference to the generator": function() {
+				var g = this.g.filter(this.filter);
+				buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
+
+				g = this.g.filter();
+				buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
+			},
+
+			"'filter' throws if 'callback' is not a function": function() {
+				var self = this;
+
+				buster.refute.exception(function() {
+					self.g.filter();
+					self.g.filter(function() {});
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.filter(0);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.filter("a");
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.filter([]);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.filter({});
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.filter(null);
+				}, "Error");
 			},
 
 			"the filter determines whether an output value shall be included or not": function() {
@@ -178,166 +172,179 @@ define(["src/dataseries.js"], function(ds) {
 		},
 
 		"time": {
-			"'time' arguments provided": {
-				"'time' sets a time range configuration": function() {
-					this.g.time(this.time.start, this.time.precision);
-					buster.assert.equals(this.g.time(), [this.time.start, this.time.precision]);
-				},
+			"'time' sets a time range configuration": function() {
+				var timeRange = [];
 
-				"'time' returns a reference to the generator": function() {
-					var g = this.g.time(this.time.start, this.time.precision);
-					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
-				},
+				this.g.inputs(this.inputs)
+					.time(new Date(2013, 0, 1), this.time.DAY)
+					.transform(function(y, x, i) { timeRange.push(x); })
+					.values();
 
-				"'time's 'precision' defaults to ds.time.DAY": function() {
-					var g = this.g.time(this.time.start);
-					buster.assert.equals(this.g.time(), [this.time.start, ds.time.DAY]);
-				},
-
-				"'time' throws if 'start' is not a date": function() {
-					var self = this;
-
-					buster.refute.exception(function() {
-						self.g.time(new Date(), ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(0, ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time("a", ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time([], ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(function() {}, ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time({}, ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(null, ds.time.DAY);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(undefined, ds.time.DAY);
-					}, "Error");
-				},
-
-				"'time' throws if 'start' is provided and 'precision' is not a function or is not a number > 0": function() {
-					var self = this;
-
-					buster.refute.exception(function() {
-						self.g.time(new Date(), 1);
-						self.g.time(new Date(), function() { return 1; });
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), 0);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), "a");
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), []);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), {});
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), null);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.time(new Date(), undefined);
-					}, "Error");
-				}
+				buster.assert(timeRange, [new Date(2013, 0, 1), new Date(2013, 0, 2), new Date(2013, 0, 3)]);
 			},
 
-			"'time' arguments omitted": {
-				"'time' returns a previously set time range configuration": function() {
-					this.g.time(this.time.start, this.time.precision);
-					buster.assert.equals(this.g.time(), [this.time.start, this.time.precision]);
-				},
+			"'time' unsets a time range configuration if either argument is set to undefined": function() {
+				var timeRange;
 
-				"'time' returns undefined if no time range configuration was previously set": function() {
-					buster.assert.equals(this.g.time(), undefined);
-				}
+				this.g.inputs(this.inputs).transform(function(y, x, i) { timeRange.push(x); });
+
+				timeRange = [];
+				this.g.time(this.time.start, this.time.precision).values();
+				buster.refute.equals(timeRange, this.inputs);
+
+				timeRange = [];
+				this.g.time().values();
+				buster.assert.equals(timeRange, this.inputs);
+
+				timeRange = [];
+				this.g.time(this.time.start, undefined).values();
+				buster.assert.equals(timeRange, this.inputs);
+
+				timeRange = [];
+				this.g.time(undefined, this.time.precision).values();
+				buster.assert.equals(timeRange, this.inputs);
+
+				timeRange = [];
+				this.g.time(this.time.start, this.time.precision).values();
+				buster.refute.equals(timeRange, this.inputs);
+			},
+
+			"'time's 'precision' defaults to ds.time.DAY": function() {
+				var timeRange = [];
+
+				this.g.inputs(this.inputs)
+					.time(new Date(2013, 0, 1))
+					.transform(function(y, x, i) { timeRange.push(x); })
+					.values();
+
+				buster.assert(timeRange, [new Date(2013, 0, 1), new Date(2013, 0, 2), new Date(2013, 0, 3)]);
+			},
+
+			"'time' returns a reference to the generator": function() {
+				var g = this.g.time(this.time.start, this.time.precision);
+				buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
+			},
+
+			"'time' throws if 'start' is not a date": function() {
+				var self = this;
+
+				buster.refute.exception(function() {
+					self.g.time(new Date(), ds.time.DAY);
+					self.g.time(undefined, ds.time.DAY);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time(0, ds.time.DAY);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time("a", ds.time.DAY);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time([], ds.time.DAY);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time(function() {}, ds.time.DAY);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time({}, ds.time.DAY);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time(null, ds.time.DAY);
+				}, "Error");
+			},
+
+			"'time' throws if 'start' is provided and 'precision' is not a function or is not a number > 0": function() {
+				var self = this;
+
+				buster.refute.exception(function() {
+					self.g.time(new Date(), 1);
+					self.g.time(new Date(), function() { return 1; });
+					self.g.time(new Date(), undefined);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time(new Date(), 0);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time(new Date(), "a");
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time(new Date(), []);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time(new Date(), {});
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.time(new Date(), null);
+				}, "Error");
 			}
 		},
 
 		"transform": {
-			"'callback' argument provided": {
-				"'transform' sets a transform": function() {
-					this.g.transform(this.transform);
-					buster.assert.equals(this.g.transform(), this.transform);
-				},
-
-				"'transform' resets a previously set transform if 'callback' is set to undefined": function() {
-					this.g.transform(this.transform);
-					buster.assert.equals(this.g.transform(), this.transform);
-
-					this.g.transform(undefined);
-					buster.assert.equals(this.g.transform(), undefined);
-				},
-
-				"'transform' returns a reference to the generator": function() {
-					var g = this.g.transform(this.transform);
-					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
-
-					g = this.g.transform(undefined);
-					buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
-				},
-
-				"'transform' throws if 'callback' is not a function": function() {
-					var self = this;
-
-					buster.refute.exception(function() {
-						self.g.transform(undefined);
-						self.g.transform(function() {});
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.transform(0);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.transform("a");
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.transform([]);
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.transform({});
-					}, "Error");
-
-					buster.assert.exception(function() {
-						self.g.transform(null);
-					}, "Error");
-				}
+			"'transform' sets a transformation": function() {
+				this.g.inputs(this.inputs).transform(this.transform).values();
+				buster.assert(this.transform.called);
 			},
 
-			"'callback' argument omitted": {
-				"'transform' returns a previously set transform": function() {
-					this.g.transform(this.transform);
-					buster.assert.equals(this.g.transform(), this.transform);
-				},
+			"'transform' overrides a previously set transformation": function() {
+				this.g.inputs(this.inputs).transform(this.transform);
 
-				"'transform' returns undefined if no transform was previously set": function() {
-					buster.assert.equals(this.g.transform(), undefined);
-				}
+				var transform = this.spy();
+				this.g.transform(transform).values();
+
+				buster.refute(this.transform.called);
+			},
+
+			"'transform' resets a previously set transformation if 'callback' is set to undefined": function() {
+				this.g.inputs(this.inputs).transform(this.transform);
+				this.g.transform().values();
+				buster.refute(this.transform.called);
+			},
+
+			"'transform' returns a reference to the generator": function() {
+				var g = this.g.transform(this.transform);
+				buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
+
+				g = this.g.transform();
+				buster.assert.equals(g.constructor.name, "FunctionDataSeriesGenerator");
+			},
+
+			"'transform' throws if 'callback' is not a function": function() {
+				var self = this;
+
+				buster.refute.exception(function() {
+					self.g.transform();
+					self.g.transform(function() {});
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.transform(0);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.transform("a");
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.transform([]);
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.transform({});
+				}, "Error");
+
+				buster.assert.exception(function() {
+					self.g.transform(null);
+				}, "Error");
 			},
 
 			"the transform determines the generated data for each pair of input and output value": function() {

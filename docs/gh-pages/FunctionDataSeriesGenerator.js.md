@@ -78,9 +78,8 @@ ds.generators.f(ds.functions.identity)
 
 ## <a name="filter" href="#">filter</a>([callback])
 
-Gets, sets or unsets a filter to be executed after computation.
-The method returns a previously set filter if `callback` is omitted.
-The method sets a filter if `callback` is provided and a function, or unsets a previously set filter if `callback` is set to `undefined`.
+Sets or unsets a filter to be executed after computation.
+The method sets a filter if `callback` is a function or unsets a previously set filter if `callback` is set to `undefined`.
 
 ### callback:
 
@@ -119,11 +118,11 @@ g.filter(ds.predicates.isPositiveNumber).values();
 
 ### Returns:
 
-* **Function|FunctionDataSeriesGenerator|undefined** Returns a previously set filter or `undefined` if `callback` is omitted, otherwise returns a reference to the generator.
+* **FunctionDataSeriesGenerator** Returns a reference to the generator.
 
 ### Throws:
 
-* **Error** Throws if `callback` is provided and is neither a function nor `undefined`.
+* **Error** Throws if `callback` is neither a function nor `undefined`.
 
 ## <a name="inputs" href="#">inputs</a>(values)
 
@@ -145,10 +144,9 @@ The method sets the inputs if `values` is provided.
 
 ## <a name="time" href="#">time</a>(start, [precision=ds.time.DAY])
 
-Gets or sets a time range configuration.
-The time range's points in time are made available via the `x` parameter of the generator's `transform` method.
-The method returns a previously set time range configuration if no arguments are provided.
-The method sets the time range configuration if `start` and `precision` are provided.
+Sets or unsets a time range configuration to be applied during transformation.
+The particular points in time of the time range will be made available via the `x` parameter of the generator's `transform` callback (if provided).
+The method sets the time range configuration if `start` and `precision` are provided or unsets a previously set configuration if either argument is set to `undefined`.
 
 ### Examples:
 
@@ -182,13 +180,13 @@ g.time(new Date(2013, 0, 1), ds.time.YEAR)
 
 ### Params:
 
-* **Date** *start* A start date.
+* **Date|undefined** *start* A start date.
 
-* **Function(Date):Number|Number** *[precision=ds.time.DAY]* The precision of the time range (in milliseconds): either a function returning an appropriate precision or a number (> 0).
+* **Function(Date):Number|Number|undefined** *[precision=ds.time.DAY]* The precision of the time range (in milliseconds): either a function returning an appropriate precision or a number (> 0).
 
 ### Returns:
 
-* **Array|FunctionDataSeriesGenerator** Returns a previously set time range configuration or `undefined` if no arguments are provided, otherwise returns a reference to the generator.
+* **FunctionDataSeriesGenerator** Returns a reference to the generator.
 
 ### Throws:
 
@@ -198,9 +196,8 @@ g.time(new Date(2013, 0, 1), ds.time.YEAR)
 
 ## <a name="transform" href="#">transform</a>([callback])
 
-Gets, sets or unsets a transform to be executed after filtering.
-The method returns a previously set transform if `callback` is omitted.
-The method sets a transform if `callback` is provided and a function, or unsets a previously set transform if `callback` is set to `undefined`.
+Sets or unsets a transformation to be executed after filtering.
+The method sets a transformation if `callback` is a function or unsets a previously set transformation if `callback` is set to `undefined`.
 
 ### callback:
 
@@ -245,11 +242,11 @@ g.inputs(ds.range(-2, 2)).transform(function(y, x, i) {
 
 ### Params:
 
-* **Function|undefined** *[callback]* A filter callback.
+* **Function|undefined** *[callback]* A transformation callback.
 
 ### Returns:
 
-* **Function|FunctionDataSeriesGenerator|undefined** Returns a previously set filter or `undefined` if `callback` is omitted, otherwise returns a reference to the generator.
+* **FunctionDataSeriesGenerator** Returns a reference to the generator.
 
 ### Throws:
 

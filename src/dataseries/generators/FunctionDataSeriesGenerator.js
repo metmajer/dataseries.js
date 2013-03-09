@@ -128,9 +128,8 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
 	};
 
 /**
- * Gets, sets or unsets a filter to be executed after computation.
- * The method returns a previously set filter if `callback` is omitted.
- * The method sets a filter if `callback` is provided and a function, or unsets a previously set filter if `callback` is set to `undefined`.
+ * Sets or unsets a filter to be executed after computation.
+ * The method sets a filter if `callback` is a function or unsets a previously set filter if `callback` is set to `undefined`.
  *
  * ### callback:
  *
@@ -164,21 +163,19 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * ```
  *
  * @param  {Function|undefined} [callback] A filter callback.
- * @return {Function|FunctionDataSeriesGenerator|undefined} Returns a previously set filter or `undefined` if `callback` is omitted, otherwise returns a reference to the generator.
- * @throws {Error} Throws if `callback` is provided and is neither a function nor `undefined`.
+ * @return {FunctionDataSeriesGenerator} Returns a reference to the generator.
+ * @throws {Error} Throws if `callback` is neither a function nor `undefined`.
  */
 	this.filter = function(callback) {
-		if (arguments.length === 0) return filter;
 		if (!(_.isFunction(callback) || callback === undefined)) throw new Error("filter(): calllback must be a function or undefined");
 		filter = callback;
 		return this;
 	};
 
 /**
- * Gets or sets a time range configuration.
- * The time range's points in time are made available via the `x` parameter of the generator's `transform` method.
- * The method returns a previously set time range configuration if no arguments are provided.
- * The method sets the time range configuration if `start` and `precision` are provided.
+ * Sets or unsets a time range configuration to be applied during transformation.
+ * The particular points in time of the time range will be made available via the `x` parameter of the generator's `transform` callback (if provided).
+ * The method sets the time range configuration if `start` and `precision` are provided or unsets a previously set configuration if either argument is set to `undefined`.
  *
  * ### Examples:
  *
@@ -210,26 +207,29 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * //     {x: new Date(2015, 0, 1), y: 2}]
  * ```
  *
- * @param  {Date} start A start date.
- * @param  {Function(Date):Number|Number} [precision=ds.time.DAY] The precision of the time range (in milliseconds): either a function returning an appropriate precision or a number (> 0).
- * @return {Array|FunctionDataSeriesGenerator} Returns a previously set time range configuration or `undefined` if no arguments are provided, otherwise returns a reference to the generator.
+ * @param  {Date|undefined} start A start date.
+ * @param  {Function(Date):Number|Number|undefined} [precision=ds.time.DAY] The precision of the time range (in milliseconds): either a function returning an appropriate precision or a number (> 0).
+ * @return {FunctionDataSeriesGenerator} Returns a reference to the generator.
  * @throws {Error} Throws if `start` is provided and is not a date.
  * @throws {Error} Throws if `start` is provided and `precision` is not function or is not a number > 0.
  */
 	this.time = function(start, precision) {
-		if (arguments.length === 0) return _.clone(timeRange);
 		if (arguments.length < 2) precision = time.DAY;
 
-		if (!_.isDate(start)) throw new Error("time(): start must be a date");
-		if (!(_.isFunction(precision) || predicates.isPositiveNumber(precision, false))) throw new Error("time(): precision must be a function or a number > 0");
-		timeRange = [new Date(start.getTime()), precision];
+		if (start === undefined || precision === undefined) {
+			timeRange = undefined;
+		} else {
+			if (!_.isDate(start)) throw new Error("time(): start must be a date");
+			if (!(_.isFunction(precision) || predicates.isPositiveNumber(precision, false))) throw new Error("time(): precision must be a function or a number > 0");
+			timeRange = [new Date(start.getTime()), precision];
+		}
+
 		return this;
 	};
 
 /**
- * Gets, sets or unsets a transform to be executed after filtering.
- * The method returns a previously set transform if `callback` is omitted.
- * The method sets a transform if `callback` is provided and a function, or unsets a previously set transform if `callback` is set to `undefined`.
+ * Sets or unsets a transformation to be executed after filtering.
+ * The method sets a transformation if `callback` is a function or unsets a previously set transformation if `callback` is set to `undefined`.
  *
  * ### callback:
  *
@@ -272,12 +272,11 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * // => [null, null, 0, 1, 2]
  * ```
  *
- * @param  {Function|undefined} [callback] A filter callback.
- * @return {Function|FunctionDataSeriesGenerator|undefined} Returns a previously set filter or `undefined` if `callback` is omitted, otherwise returns a reference to the generator.
+ * @param  {Function|undefined} [callback] A transformation callback.
+ * @return {FunctionDataSeriesGenerator} Returns a reference to the generator.
  * @throws {Error} Throws if `callback` is provided and is neither a function nor `undefined`.
  */
 	this.transform = function(callback) {
-		if (arguments.length === 0) return transform;
 		if (!(_.isFunction(callback) || callback === undefined)) throw new Error("transform(): calllback must be a function or undefined");
 		transform = callback;
 		return this;
