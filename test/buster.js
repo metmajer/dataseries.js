@@ -8,7 +8,7 @@ config["DataSeries.js AMD Browser Tests"] = {
 		"lib/lodash.js",
 		"lib/require.js",
 		"test/require.config.js",
-		"test/util.js",
+		"test/utils.js",
 	],
 	extensions: [require("buster-amd")],
 	"buster-amd": {
