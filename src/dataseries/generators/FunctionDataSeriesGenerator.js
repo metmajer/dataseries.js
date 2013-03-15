@@ -14,7 +14,7 @@
  * 3. Transformation
  * 4. (Otherwise) Processing
  *
- * The callbacks provided to filter`, `transform` and `call` are executed under the following `this` context:
+ * The callbacks provided to `filter`, `transform` and `call` are executed under the following `this` context:
  * - `generator`
  * - `inputs`
  * - `outputs`
@@ -162,7 +162,7 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * // => [0, 1, 2]
  * ```
  *
- * @param  {Function|undefined} [callback] A filter callback.
+ * @param  {Function|undefined} [callback] A filter callback *f(y, x, i)*.
  * @return {FunctionDataSeriesGenerator} Returns a reference to the generator.
  * @throws {Error} Throws if `callback` is neither a function nor `undefined`.
  */
@@ -272,7 +272,7 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * // => [null, null, 0, 1, 2]
  * ```
  *
- * @param  {Function|undefined} [callback] A transformation callback.
+ * @param  {Function|undefined} [callback] A transformation callback *f(y, x, i)*.
  * @return {FunctionDataSeriesGenerator} Returns a reference to the generator.
  * @throws {Error} Throws if `callback` is provided and is neither a function nor `undefined`.
  */
@@ -289,6 +289,7 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * ### callback:
  *
  * The callback is a function *f(outputs)* with the parameters (excess arguments to `call` are relayed to the callback):
+ *
  * - `outputs` the current set of outputs
  *
  * The computation context of a callback is defined as:
@@ -321,7 +322,7 @@ var generator = function FunctionDataSeriesGenerator(algorithm, algorithmArgs) {
  * //     {x: 2, y: 1}]
  * ```
  *
- * @param  {Function} callback A callback.
+ * @param  {Function} callback A callback *f(outputs)*.
  * @return {FunctionDataSeriesGenerator} Returns a reference to the generator.
  * @throws {Error} Throws if `callback` is not a function.
  */

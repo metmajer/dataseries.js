@@ -92,6 +92,18 @@ This script is freely distributable under the terms of the MIT license.
 
 - <a href="ds.transforms#point">point</a>
 
+### <a href="ds.utils">ds.utils</a>
+
+- <a href="ds.utils#hash">hash</a>
+
+- <a href="ds.utils#hashObject">hashObject</a>
+
+### <a href="ds.visitors">ds.visitors</a>
+
+- <a href="ds.visitors#breadthFirst">breadthFirst</a>
+
+- <a href="ds.visitors#depthFirst">depthFirst</a>
+
 ## Generators
 
 ### <a href="FunctionDataSeriesGenerator">FunctionDataSeriesGenerator</a>

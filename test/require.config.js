@@ -22,6 +22,8 @@ require.config({
 		"dataseries/random": "../src/dataseries/random",
 		"dataseries/range": "../src/dataseries/range",
 		"dataseries/time": "../src/dataseries/time",
-		"dataseries/transforms": "../src/dataseries/transforms"
+		"dataseries/transforms": "../src/dataseries/transforms",
+		"dataseries/utils": "../src/dataseries/utils",
+		"dataseries/visitors": "../src/dataseries/visitors"
 	}
 });

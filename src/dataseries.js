@@ -9,7 +9,9 @@ define([
 	"dataseries/random",
 	"dataseries/range",
 	"dataseries/time",
-	"dataseries/transforms"
+	"dataseries/transforms",
+	"dataseries/utils",
+	"dataseries/visitors"
 ],
 function (
 	require,
@@ -22,7 +24,9 @@ function (
 	random,
 	range,
 	time,
-	transforms
+	transforms,
+	utils,
+	visitors
 ) {
 "use strict";
 
@@ -37,7 +41,9 @@ return {
 	random: random,
 	range: range,
 	time: time,
-	transforms: transforms
+	transforms: transforms,
+	utils: utils,
+	visitors: visitors
 };
 
 });

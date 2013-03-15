@@ -15,7 +15,7 @@ results in the execution of the following processing stages:
 3. Transformation
 4. (Otherwise) Processing
 
-The callbacks provided to filter`, `transform` and `call` are executed under the following `this` context:
+The callbacks provided to `filter`, `transform` and `call` are executed under the following `this` context:
 - `generator`
 - `inputs`
 - `outputs`
@@ -32,6 +32,7 @@ Multiple callbacks can be added by invoking `call` multiple times. Callbacks are
 ### callback:
 
 The callback is a function *f(outputs)* with the parameters (excess arguments to `call` are relayed to the callback):
+
 - `outputs` the current set of outputs
 
 The computation context of a callback is defined as:
@@ -66,7 +67,7 @@ ds.generators.f(ds.functions.identity)
 
 ### Params:
 
-* **Function** *callback* A callback.
+* **Function** *callback* A callback *f(outputs)*.
 
 ### Returns:
 
@@ -114,7 +115,7 @@ g.filter(ds.predicates.isPositiveNumber).values();
 
 ### Params:
 
-* **Function|undefined** *[callback]* A filter callback.
+* **Function|undefined** *[callback]* A filter callback *f(y, x, i)*.
 
 ### Returns:
 
@@ -242,7 +243,7 @@ g.inputs(ds.range(-2, 2)).transform(function(y, x, i) {
 
 ### Params:
 
-* **Function|undefined** *[callback]* A transformation callback.
+* **Function|undefined** *[callback]* A transformation callback *f(y, x, i)*.
 
 ### Returns:
 
