@@ -13,7 +13,7 @@ function line(selection) {
 		var yMax = d3.max(data, y);
 		var yLimit = Math.max(-yMin, yMax);
 
-		var xScale = d3.time.scale()
+		var xScale = (x(data[0]) instanceof Date ? d3.time.scale() : d3.scale.linear())
 			.range([0, width - margin.left - margin.right])
 			.domain(d3.extent(data, x));
 
