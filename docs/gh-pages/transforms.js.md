@@ -4,7 +4,7 @@
 
 The `ds.transforms` module is a collection of functions for transforming a pair of values `x` and `y` into an arbitrary data structure.
 
-## <a name="wiki-pair" href="#">pair</a>(x, y)
+## <a name="pair" href="#">pair</a>(x, y)
 
 Transforms a pair of values `x` and `y` into an array `[x, y]`.
 

@@ -4,7 +4,7 @@
 
 The `ds.predicates` module is a collection of functions which indicate whether a particular predicate (property) holds true for a particular object.
 
-## <a name="wiki-isArrayOf" href="#">isArrayOf</a>(object, predicate, [length=true])
+## <a name="isArrayOf" href="#">isArrayOf</a>(object, predicate, [length=true])
 
 Checks if `object` is an array and `predicate` holds true for all its elements.
 

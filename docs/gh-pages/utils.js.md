@@ -4,7 +4,7 @@
 
 The `ds.utils` module is a collection of algorithms that don't fit anywhere else.
 
-## <a name="wiki-hash" href="#">hash</a>(string)
+## <a name="hash" href="#">hash</a>(string)
 
 Computes a hash from a string.
 
@@ -25,7 +25,7 @@ for a comprehensive comparison of various hash algorithms.
 
 Computes a hash from the enumerable properties of an object.
 
-The method uses the Fowler–Noll–Vo hash algorithm provided by [`ds.utils.hash`](ds.utils#hash).
+The method uses the Fowler–Noll–Vo hash algorithm provided by [`ds.utils.hash`](ds.utils#wiki-hash).
 
 ### Examples:
 

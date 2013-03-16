@@ -10,113 +10,113 @@ This script is freely distributable under the terms of the MIT license.
 
 ### <a href="ds.functions">ds.functions</a>
 
-- <a href="ds.functions#cos">cos</a>
+- <a href="ds.functions#wiki-cos">cos</a>
 
-- <a href="ds.functions#cubic">cubic</a>
+- <a href="ds.functions#wiki-cubic">cubic</a>
 
-- <a href="ds.functions#exp">exp</a>
+- <a href="ds.functions#wiki-exp">exp</a>
 
-- <a href="ds.functions#identity">identity</a>
+- <a href="ds.functions#wiki-identity">identity</a>
 
-- <a href="ds.functions#linear">linear</a>
+- <a href="ds.functions#wiki-linear">linear</a>
 
-- <a href="ds.functions#log">log</a>
+- <a href="ds.functions#wiki-log">log</a>
 
-- <a href="ds.functions#polynomial">polynomial</a>
+- <a href="ds.functions#wiki-polynomial">polynomial</a>
 
-- <a href="ds.functions#sin">sin</a>
+- <a href="ds.functions#wiki-sin">sin</a>
 
-- <a href="ds.functions#square">square</a>
+- <a href="ds.functions#wiki-square">square</a>
 
 ### <a href="ds.generators">ds.generators</a>
 
-- <a href="ds.generators#f">f</a>
+- <a href="ds.generators#wiki-f">f</a>
 
 ### <a href="ds.initialize">ds.initialize</a>
 
-- <a href="ds.initialize#initialize">initialize</a>
+- <a href="ds.initialize#wiki-initialize">initialize</a>
 
 ### <a href="ds.normalize">ds.normalize</a>
 
-- <a href="ds.normalize#normalize">normalize</a>
+- <a href="ds.normalize#wiki-normalize">normalize</a>
 
 ### <a href="ds.predicates">ds.predicates</a>
 
-- <a href="ds.predicates#isArrayOf">isArrayOf</a>
+- <a href="ds.predicates#wiki-isArrayOf">isArrayOf</a>
 
-- <a href="ds.predicates#isDate">isDate</a>
+- <a href="ds.predicates#wiki-isDate">isDate</a>
 
-- <a href="ds.predicates#isFunction">isFunction</a>
+- <a href="ds.predicates#wiki-isFunction">isFunction</a>
 
-- <a href="ds.predicates#isInteger">isInteger</a>
+- <a href="ds.predicates#wiki-isInteger">isInteger</a>
 
-- <a href="ds.predicates#isNegativeInteger">isNegativeInteger</a>
+- <a href="ds.predicates#wiki-isNegativeInteger">isNegativeInteger</a>
 
-- <a href="ds.predicates#isNegativeNumber">isNegativeNumber</a>
+- <a href="ds.predicates#wiki-isNegativeNumber">isNegativeNumber</a>
 
-- <a href="ds.predicates#isNumber">isNumber</a>
+- <a href="ds.predicates#wiki-isNumber">isNumber</a>
 
-- <a href="ds.predicates#isPositiveInteger">isPositiveInteger</a>
+- <a href="ds.predicates#wiki-isPositiveInteger">isPositiveInteger</a>
 
-- <a href="ds.predicates#isPositiveNumber">isPositiveNumber</a>
+- <a href="ds.predicates#wiki-isPositiveNumber">isPositiveNumber</a>
 
 ### <a href="ds.random">ds.random</a>
 
-- <a href="ds.random#rand">rand</a>
+- <a href="ds.random#wiki-rand">rand</a>
 
 ### <a href="ds.range">ds.range</a>
 
-- <a href="ds.range#range">range</a>
+- <a href="ds.range#wiki-range">range</a>
 
 ### <a href="ds.time">ds.time</a>
 
-- <a href="ds.time#DAY">DAY</a>
+- <a href="ds.time#wiki-DAY">DAY</a>
 
-- <a href="ds.time#HOUR">HOUR</a>
+- <a href="ds.time#wiki-HOUR">HOUR</a>
 
-- <a href="ds.time#MINUTE">MINUTE</a>
+- <a href="ds.time#wiki-MINUTE">MINUTE</a>
 
-- <a href="ds.time#MONTH">MONTH</a>
+- <a href="ds.time#wiki-MONTH">MONTH</a>
 
-- <a href="ds.time#SECOND">SECOND</a>
+- <a href="ds.time#wiki-SECOND">SECOND</a>
 
-- <a href="ds.time#WEEK">WEEK</a>
+- <a href="ds.time#wiki-WEEK">WEEK</a>
 
-- <a href="ds.time#YEAR">YEAR</a>
+- <a href="ds.time#wiki-YEAR">YEAR</a>
 
-- <a href="ds.time#range">range</a>
+- <a href="ds.time#wiki-range">range</a>
 
 ### <a href="ds.transforms">ds.transforms</a>
 
-- <a href="ds.transforms#pair">pair</a>
+- <a href="ds.transforms#wiki-pair">pair</a>
 
-- <a href="ds.transforms#point">point</a>
+- <a href="ds.transforms#wiki-point">point</a>
 
 ### <a href="ds.utils">ds.utils</a>
 
-- <a href="ds.utils#hash">hash</a>
+- <a href="ds.utils#wiki-hash">hash</a>
 
-- <a href="ds.utils#hashObject">hashObject</a>
+- <a href="ds.utils#wiki-hashObject">hashObject</a>
 
 ### <a href="ds.visitors">ds.visitors</a>
 
-- <a href="ds.visitors#breadthFirst">breadthFirst</a>
+- <a href="ds.visitors#wiki-breadthFirst">breadthFirst</a>
 
-- <a href="ds.visitors#depthFirst">depthFirst</a>
+- <a href="ds.visitors#wiki-depthFirst">depthFirst</a>
 
 ## Generators
 
 ### <a href="FunctionDataSeriesGenerator">FunctionDataSeriesGenerator</a>
 
-- <a href="FunctionDataSeriesGenerator#call">call</a>
+- <a href="FunctionDataSeriesGenerator#wiki-call">call</a>
 
-- <a href="FunctionDataSeriesGenerator#filter">filter</a>
+- <a href="FunctionDataSeriesGenerator#wiki-filter">filter</a>
 
-- <a href="FunctionDataSeriesGenerator#inputs">inputs</a>
+- <a href="FunctionDataSeriesGenerator#wiki-inputs">inputs</a>
 
-- <a href="FunctionDataSeriesGenerator#time">time</a>
+- <a href="FunctionDataSeriesGenerator#wiki-time">time</a>
 
-- <a href="FunctionDataSeriesGenerator#transform">transform</a>
+- <a href="FunctionDataSeriesGenerator#wiki-transform">transform</a>
 
-- <a href="FunctionDataSeriesGenerator#values">values</a>
+- <a href="FunctionDataSeriesGenerator#wiki-values">values</a>
 

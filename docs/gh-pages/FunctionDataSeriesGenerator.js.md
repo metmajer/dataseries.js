@@ -3,7 +3,7 @@
 # dataseries.js FunctionDataSeriesGenerator module
 
 The `FunctionDataSeriesGenerator` initializes data series from the outputs of a function *y = f(x)*.<br>
-See the [`ds.generators.f`](ds.generators#f) generator factory function for preferred construction.
+See the [`ds.generators.f`](ds.generators#wiki-f) generator factory function for preferred construction.
 
 The generator provides a convenient builder syntax which greatly facilitates the filtering, transforming
 and otherwise processing of data via the generator's `filter`, `transform` and `call` methods. After the
@@ -24,7 +24,7 @@ The callbacks provided to `filter`, `transform` and `call` are executed under th
 See the [`filter`](#filter), [`transform`](#transform) and [`call`](#call) methods for precise definitions
 of the respective contexts.
 
-## <a name="wiki-call" href="#">call</a>(callback)
+## <a name="call" href="#">call</a>(callback)
 
 Adds a callback for otherwise processing of the resulting data series to the end of the processing chain.
 Multiple callbacks can be added by invoking `call` multiple times. Callbacks are executed in the given order.

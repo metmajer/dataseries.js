@@ -37,9 +37,9 @@ The adjacent nodes of a particular node are expected to be made available via th
 
 * **Object** *root* The designated root node.
 
-* **Function** *callback* A callback f(node, path) to be executed upon visiting `node`, where `path` is an array of node indexes from `root` to `node`.
+* **Function** *callback* A callback *f(node, path)* to be executed upon visiting `node`, where `path` is an array of node indexes from `root` to `node`.
 
-* **Function:Boolean|undefined** *[doProcess]* A function f(node, path) which indicates if a particular node shall be visited or not by returning a truthy or falsy value, respectively, where `path` is an array of node indexes from `root` to `node`.
+* **Function:Boolean|undefined** *[doProcess]* A function *f(node, path)* which indicates if a particular node shall be visited or not by returning a truthy or falsy value, respectively, where `path` is an array of node indexes from `root` to `node`.
 
 ### Throws:
 
@@ -80,9 +80,9 @@ The adjacent nodes of a particular node are expected to be made available via th
 
 * **Object** *root* The designated root node.
 
-* **Function** *callback* A callback f(node, path) to be executed upon visiting `node`, where `path` is an array of node indexes from `root` to `node`.
+* **Function** *callback* A callback *f(node, path)* to be executed upon visiting `node`, where `path` is an array of node indexes from `root` to `node`.
 
-* **Function:Boolean|undefined** *[doProcess]* A function f(node, path) which indicates if a particular node shall be visited or not by returning a truthy or falsy value, respectively, where `path` is an array of node indexes from `root` to `node`.
+* **Function:Boolean|undefined** *[doProcess]* A function *f(node, path)* which indicates if a particular node shall be visited or not by returning a truthy or falsy value, respectively, where `path` is an array of node indexes from `root` to `node`.
 
 ### Throws:
 

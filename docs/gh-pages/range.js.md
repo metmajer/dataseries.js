@@ -2,7 +2,7 @@
 
 # dataseries.js range module
 
-## <a name="wiki-range" href="#">range</a>([start=0], end, [step=1])
+## <a name="range" href="#">range</a>([start=0], end, [step=1])
 
 Creates a numeric range of floats ranging from 'start' to 'end' with values equidistantly spaced by 'step'.
 Note that, depending on the choice of 'step', the 'end' value is only included in the result if

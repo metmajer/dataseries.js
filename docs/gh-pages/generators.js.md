@@ -4,7 +4,7 @@
 
 The `ds.generators` module is a collection of data series generator factories.
 
-## <a name="wiki-f" href="#">f</a>(algorithm)
+## <a name="f" href="#">f</a>(algorithm)
 
 Creates a new `FunctionDataSeriesGenerator`, which initializes data series from
 the outputs of `algorithm`, a function *y = f(x)*. Any excess arguments provided

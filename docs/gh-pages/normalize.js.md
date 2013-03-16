@@ -2,7 +2,7 @@
 
 # dataseries.js normalize module
 
-## <a name="wiki-normalize" href="#">normalize</a>(values, [lower=0], [upper=1], [propertyName])
+## <a name="normalize" href="#">normalize</a>(values, [lower=0], [upper=1], [propertyName])
 
 Normalizes a data series to fit the range [`lower`, `upper`].
 The minimum value of the series is mapped to `lower` and the maximum value is mapped to `upper`, the values between limits are scaled linearly.

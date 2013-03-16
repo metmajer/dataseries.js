@@ -29,7 +29,8 @@ module.exports = function(grunt) {
 				dest: "docs/gh-pages/",
 				replacements: [
 					{ from: ".html", to: "" },
-					{ from: /name="(.*)?"/, to: 'name="wiki-$1"' }
+					{ from: /href="(.+)#(.+)?"/g, to: 'href="$1#wiki-$2"' },
+					{ from: /\[(.+)\]\((ds\..+)#(.+)?\)/g, to: '[$1]($2#wiki-$3)' }
 				]
 			}
 		},

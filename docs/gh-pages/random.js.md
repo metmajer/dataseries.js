@@ -4,7 +4,7 @@
 
 The `ds.random` module is a collection of random number generators.
 
-## <a name="wiki-rand" href="#">rand</a>([lower=0], [upper=1])
+## <a name="rand" href="#">rand</a>([lower=0], [upper=1])
 
 Generates a random number in the range [lower, upper).
 

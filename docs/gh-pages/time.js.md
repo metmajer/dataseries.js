@@ -4,7 +4,7 @@
 
 The `ds.time` module is a collection of objects related to time.
 
-## <a name="wiki-DAY" href="#">DAY</a>
+## <a name="DAY" href="#">DAY</a>
 
 The number of milliseconds in a day.
 

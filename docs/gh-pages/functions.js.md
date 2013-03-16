@@ -4,7 +4,7 @@
 
 The `ds.functions` module is a collection of functions *y = f(x)*, which map an input value `x` to an output value *y*.
 
-## <a name="wiki-cos" href="#">cos</a>(x, [a=1], [f=1], [φ=0], [b=0])
+## <a name="cos" href="#">cos</a>(x, [a=1], [f=1], [φ=0], [b=0])
 
 Computes the output of the cosine function *f(x, a, f, φ, b) = a · cos(2 · π · f · x + φ) + b* for a particular `x`.
 

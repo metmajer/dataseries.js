@@ -2,7 +2,7 @@
 
 # dataseries.js initialize module
 
-## <a name="wiki-initialize" href="#">initialize</a>(value, [length=1])
+## <a name="initialize" href="#">initialize</a>(value, [length=1])
 
 Initializes a data series from a particular `value`.
 Each element in the resulting series will be a clone of `value`.
